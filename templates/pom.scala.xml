@@ -19,5 +19,13 @@
                 <version>@d.version</version>
             </dependency>
         }
+
+        @if(projectDescription.language.languageName == "scala") {
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>@projectDescription.language.version</version>
+            </dependency>
+        }
     </dependencies>
 </project>
