@@ -10,6 +10,8 @@ scalaVersion := "2.11.6"
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator
 
+// Includes templates in the compilation
+sourceDirectories in (Compile, TwirlKeys.compileTemplates) += baseDirectory.value / "templates"
 
 // Adds resources to dist
 import NativePackagerHelper._
