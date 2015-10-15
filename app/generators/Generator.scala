@@ -34,7 +34,7 @@ trait Generator {
   /**
    * Zip the given folder, delete the folder and return the zip file. 
    */
-  def zip(folder: File): Future[File] = {
+  def zip(folder: File, folderName: String): Future[File] = {
     Future {
       val folderToZip = folder.toPath()
 
@@ -46,8 +46,7 @@ trait Generator {
       val zipFS = FileSystems.newFileSystem(zipFSURI, env)
 
       try {
-        val folderInZip = zipFS.getPath("/", folderToZip.getFileName.toString())
-
+        val folderInZip = zipFS.getPath("/", folderName)
         Generator.copyDir(folderToZip, folderInZip)
       } finally {
         zipFS.close()
