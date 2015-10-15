@@ -8,14 +8,15 @@
     </nav>
 
     <div class="container">
-        <div class="well">
-            Kickstartr bootstraps a project to you get started writing reactive applications in no time.
-        </div>
-
 
         @* first step static to make it nicely indexable *@
         <div class="guide">
             <div class="step-1">
+                <div class="well">
+                    Kickstartr bootstraps a project to you get started writing reactive applications in no time.
+                </div>
+
+
                 <div class="row choices">
                     <div class="col-xs-6">
                         <div class="media panel panel-default choice project-type" data-project-type="Akka">
@@ -103,6 +104,17 @@
                         <h4>Enter project details</h4>
                         <div class="btn btn-default btn-sm back"><span class="glyphicon glyphicon-chevron-left"></span> Back </div>
                         <div class="details">
+
+                            <div class="form-group language-selection">
+                                <label>Language</label>
+                                <div class="radio">
+                                    <label><input type="radio" name="language" value="Scala" checked>Scala</label>
+                                </div>
+                                <div class="radio">
+                                    <label><input type="radio" name="language" value="Java">Java</label>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label for="name">Project Name</label>
                                 <input id="name" type="text" class="form-control" value="">
@@ -112,7 +124,7 @@
                                 <input id="organization" type="text" class="form-control" value="">
                             </div>
                         </div>
-                        <div id="create" class="btn btn-primary btn-lg">Create project</div>
+                        <div id="create" class="btn btn-primary btn-lg">Create a project for me!</div>
                     </div>
                 </div>
         </div>
@@ -122,7 +134,8 @@
 
         var state = {
                 projectName: "MyProject",
-                organization: "org.example"
+                organization: "org.example",
+                language: "Scala"
             },
             projects = [{
                 name: "Akka",
@@ -174,7 +187,7 @@
 
             if (project.buildTools.length == 1) {
                 // no need to choose
-                state.buildTool = project.buildTools[0];
+                state.buildTool = buildTools.find(function(curr) { return curr.name == project.buildTools[0] })
                 state.back = function() {
                     state.project = undefined
                     state.buildTool = undefined
@@ -253,6 +266,9 @@
         $("#organization").on('change', function(ev) {
            state.organization = ev.target.value
         })
+        $("#language").on('change', function(ev) {
+           state.language = ev.target.value
+        })
 
         function enterDetails() {
             $(".step-3").show()
@@ -261,6 +277,12 @@
             $(".step-3 .summary").append($("<p><h4>Project type:</h4>" + state.project.summary + "</p>"))
             $(".step-3 .summary").append($("<p><h4>Build tool:</h4>" + state.buildTool.name + "</p>"))
 
+            if (state.project.languages.length > 1) {
+                $(".language-selection").show()
+
+            } else {
+                $(".language-selection").hide()
+            }
 
             $("#name").val(state.projectName)
             $("#organization").val(state.organization)
@@ -268,6 +290,7 @@
 
         $("#create").on('click', function() {
             var generatorUrl = "generate/" + state.project.name
+                + "/" + state.language
                 + "/" + state.buildTool.name
                 + "/" + encodeURIComponent(state.projectName)
                 + "/" + encodeURIComponent(state.organization)

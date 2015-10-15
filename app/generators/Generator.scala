@@ -1,13 +1,14 @@
 package generators
 
 import models._
-
 import java.io.File
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
-
 import scala.concurrent.Future
 import scala.util.Random
+import java.util.{ HashMap => jHashMap }
+import java.net.URI
+import java.io.IOException
 
 trait Generator {
   import Generator._
@@ -25,15 +26,40 @@ trait Generator {
     }
     
     Future {
-      val fileSystem = FileSystems.getDefault
-      val source =  fileSystem.getPath(currentPath, mapProjectType(projectType))
-      val target = fileSystem.getPath(currentPath, randomName)
+      val source =  currentPath.resolve(mapProjectType(projectType))
+      val target = currentPath.resolve(randomName)
       copyDir(source, target, Some(k9rFileEnding))
       target.toFile
     }
   }
 
-  def zip(file: File): Future[File] = ???
+  /**
+   * Zip the given folder, delete the folder and return the zip file. 
+   */
+  def zip(folder: File): Future[File] = {
+    Future {
+      val folderToZip = folder.toPath()
+
+      val env = new jHashMap[String, String]()
+      env.put("create", "true")
+
+      val zipFile = currentPath.resolve(randomName)
+      val zipFSURI = URI.create(s"jar:${zipFile.toUri().toString()}")
+      val zipFS = FileSystems.newFileSystem(zipFSURI, env)
+
+      try {
+        val folderInZip = zipFS.getPath("/", folderToZip.getFileName.toString())
+
+        Generator.copyDir(folderToZip, folderInZip)
+      } finally {
+        zipFS.close()
+      }
+      
+      Generator.deleteDir(folderToZip)
+      
+      zipFile.toFile()
+    }
+  }
 }
 
 object Generator {
@@ -41,7 +67,9 @@ object Generator {
   final val PlayResources = "resources-play"
   final val k9rFileEnding = ".k9r"
 
-  val currentPath = new File(".").getCanonicalFile.getCanonicalPath
+  val currentPath = Paths.get("").toAbsolutePath()
+
+  def randomName: String = s"tmp-${System.currentTimeMillis}-${Random.nextLong}-k9r"
 
   def copyDir(src: Path, dest: Path, filterOut: Option[String] = None) {
     val fileVisitor = new SimpleFileVisitor[Path]() {
@@ -61,6 +89,21 @@ object Generator {
       private def copy(file: Path) {
         val pathInDest = dest.resolve(src.relativize(file).toString)
         Files.copy(file, pathInDest, StandardCopyOption.REPLACE_EXISTING)
+      }
+    }
+
+    Files.walkFileTree(src, fileVisitor)
+  }
+  
+  def deleteDir(src: Path) {
+    val fileVisitor = new SimpleFileVisitor[Path]() {
+      override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
+        Files.delete(file)
+        FileVisitResult.CONTINUE
+      }
+      override def postVisitDirectory(file: Path, ex: IOException): FileVisitResult = {
+        Files.delete(file)
+        FileVisitResult.CONTINUE
       }
     }
 

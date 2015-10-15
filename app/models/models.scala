@@ -9,23 +9,28 @@ case class ProjectDescription(
 
 sealed trait ProjectType {
   def version: Option[String]
+  def dirName: String
   def dependencies: List[Dependency]
 }
 
 case object Play extends ProjectType {
   def version = Some("2.4.3")
+  def dirName: String = "play-webapp"
   def dependencies = Nil
 }
 case object Akka extends ProjectType {
   def version = Some("2.4.0")
+  def dirName: String = "akka-project"
   def dependencies = Nil
 }
 case object Spark extends ProjectType {
   def version = Some("1.5.1")
+  def dirName: String = "spark-project"
   def dependencies = Nil
 }
 case object SimpleScala extends ProjectType {
   def version = None
+  def dirName: String = "scala-project"
   def dependencies = Nil
 }
 
