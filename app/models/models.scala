@@ -21,7 +21,8 @@ case object Play extends ProjectType {
 case object Akka extends ProjectType {
   def version = Some("2.4.0")
   def dirName: String = "akka-project"
-  def dependencies = Nil
+  def dependencies =
+    List(Dependency("com.typesafe.akka", "akka-actor", "2.4.0"))
 }
 case object Spark extends ProjectType {
   def version = Some("1.5.1")
@@ -41,12 +42,15 @@ case object Gradle extends BuildTool
 
 sealed trait Language {
   def version: String
+  def languageName: String
 }
 case object Scala extends Language {
   def version = "2.11.6"
+  def languageName: String = "scala"
 }
 case object Java extends Language {
   def version = "1.8"
+  def languageName: String = "java"
 }
 
 case class Dependency(artifactId: String, groupId: String, version: String)
