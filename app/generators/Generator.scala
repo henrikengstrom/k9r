@@ -17,11 +17,16 @@ trait Generator {
 
   def generate(projectDescription: ProjectDescription): Future[File]
 
-  def makeProjectBase(projectType: String): Future[File] = {
+  def makeProjectBase(projectType: ProjectType): Future[File] = {
+    def mapProjectType(pt: ProjectType): String = pt match {
+      case models.Play => PlayResources
+      case _ => StandardResources
+    }
+    
     Future {
-      val source =  currentPath.resolve(projectType)
+      val source =  currentPath.resolve(mapProjectType(projectType))
       val target = currentPath.resolve(randomName)
-      copyDir(source, target)
+      copyDir(source, target, Some(k9rFileEnding))
       target.toFile
     }
   }
@@ -56,17 +61,22 @@ trait Generator {
 }
 
 object Generator {
-  final val Standard = "resources-standard"
-  final val Play = "resources-play"
+  final val StandardResources = "resources-standard"
+  final val PlayResources = "resources-play"
+  final val k9rFileEnding = ".k9r"
 
   val currentPath = Paths.get("").toAbsolutePath()
 
   def randomName: String = s"tmp-${System.currentTimeMillis}-${Random.nextLong}-k9r"
 
-  def copyDir(src: Path, dest: Path) {
+  def copyDir(src: Path, dest: Path, filterOut: Option[String] = None) {
     val fileVisitor = new SimpleFileVisitor[Path]() {
       override def visitFile(file: Path, attributes: BasicFileAttributes): FileVisitResult = {
-        copy(file)
+        if (filterOut.isDefined && file.getFileName.endsWith(filterOut.get))
+          Files.delete(file)
+        else
+          copy(file)
+
         FileVisitResult.CONTINUE
       }
       override def preVisitDirectory(file: Path, attributes: BasicFileAttributes): FileVisitResult = {
