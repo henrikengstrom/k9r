@@ -11,12 +11,23 @@ sealed trait ProjectType {
   def version: Option[String]
   def dirName: String
   def dependencies: List[Dependency]
+
+  /**
+   * @return A description of what is wrong with the given tool and language for this
+   *         project type or None if they are ok
+   */
+  def validateCombination(tool: BuildTool, language: Language): Option[String] = None
 }
 
 case object Play extends ProjectType {
   def version = Some("2.4.3")
   def dirName: String = "play-webapp"
   def dependencies = Nil
+
+  override def validateCombination(tool: BuildTool, language: Language): Option[String] =
+    if (tool != SBT) Some("Play project can only be created with SBT")
+    else None
+  
 }
 case object Akka extends ProjectType {
   def version = Some("2.4.0")
@@ -33,6 +44,10 @@ case object SimpleScala extends ProjectType {
   def version = None
   def dirName: String = "scala-project"
   def dependencies = Nil
+
+  override def validateCombination(tool: BuildTool, language: Language): Option[String] =
+    if (language != Scala) Some("Scala language is the only language for the simple Scala project (well duh!)")
+    else None
 }
 
 sealed trait BuildTool

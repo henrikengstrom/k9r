@@ -38,6 +38,7 @@ class Application extends Controller {
       proj <- findOrElse(project, nameToProjectType, s"Unknown project type $project").right
       lang <- findOrElse(language, nameToLanguage, s"Unknown language $language").right
       tool <- findOrElse(buildTool, nameToBuildTool, s"Unknown build tool $buildTool").right
+      _ <- proj.validateCombination(tool, lang).toLeft(()).right
     } yield {
         ProjectDescription(proj, tool, lang, name, organization)
     }
