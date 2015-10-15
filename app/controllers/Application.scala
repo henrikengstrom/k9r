@@ -1,6 +1,6 @@
 package controllers
 
-import generators.Generator
+import generators.{MvnGenerator, Generator}
 import models.{BuildTool, ProjectDescription}
 import play.api.mvc._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,8 +26,8 @@ class Application extends Controller {
     "java" -> models.Java
   )
 
-  val buildToolGenerators = Map.empty[BuildTool, Generator]
-
+  val buildToolGenerators: Map[BuildTool, Generator] =
+    Map(models.Maven -> MvnGenerator)
 
   def index = Action {
     Ok(views.html.index())
