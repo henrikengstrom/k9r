@@ -5,6 +5,7 @@ import models.{BuildTool, ProjectDescription}
 import play.api.mvc._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import generators.GradleGenerator
 
 class Application extends Controller {
 
@@ -27,7 +28,7 @@ class Application extends Controller {
   )
 
   val buildToolGenerators: Map[BuildTool, Generator] =
-    Map(models.Maven -> MvnGenerator)
+    Map(models.Maven -> MvnGenerator, models.Gradle -> GradleGenerator)
 
   def index = Action {
     Ok(views.html.index())
