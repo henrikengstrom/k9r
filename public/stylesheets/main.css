@@ -10,11 +10,13 @@
 }
 
 .navbar-static-top .logo {
-    height: 20px
+    height: 35px;
+    margin-top: -10px;
 }
 
 .navbar-static-top .name {
     font-weight: bold;
+    font-size: 24pt;
 }
 
 .guide .panel-body {
@@ -28,3 +30,14 @@
 .guide .media-left {
     width: 150px;
 }
+
+.guide .choice:hover {
+    background-color: #c4eeff;
+    border-color: #59d5ff;
+}
+
+.guide .choice:hover * {
+    cursor: pointer;
+    cursor: hand;
+}
+

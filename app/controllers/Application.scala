@@ -9,4 +9,9 @@ class Application extends Controller {
     Ok(views.html.index())
   }
 
+  def generate(project: String, buildTool: String, name: String, organization: String) = Action { _ =>
+
+    Ok("TODO")
+  }
+
 }

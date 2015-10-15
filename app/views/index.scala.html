@@ -13,16 +13,18 @@
         </div>
 
 
+        @* first step static to make it nicely indexable *@
         <div class="guide">
             <div class="step-1">
-                <div class="row">
+                <div class="row choices">
                     <div class="col-xs-6">
-                        <div class="media panel panel-default project-type" data-project-type="Akka">
+                        <div class="media panel panel-default choice project-type" data-project-type="Akka">
                             <div class="panel-body">
                                 <div class="media-left">
                                     <img class="logo" style="height: 20px" src="@routes.Assets.versioned("images/akka_icon.png")">
                                 </div>
                                 <div class="media-body">
+                                    <div class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></div>
                                     <h4 class="media-heading">Akka</h4>
                                     <p>
                                         Start creating message driven reactive applications with the actor model.
@@ -32,29 +34,29 @@
                         </div>
                     </div>
                     <div class="col-xs-6">
-                        <div class="media panel panel-default project-type" data-project-type="Play">
+                        <div class="media panel panel-default choice project-type" data-project-type="Play">
                             <div class="panel-body">
                                 <div class="media-left">
                                     <img class="logo" src="@routes.Assets.versioned("images/play_icon.svg")">
                                 </div>
                                 <div class="media-body">
-                                    <h4 class="media-heading">Play framework</h4>
+                                    <div class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></div>
+                                    <h4 class="media-heading">Play Framework</h4>
                                     <p>
-                                        Build reactive web applications with ease and style
+                                        Build modern, reactive web applications with ease and style.
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-xs-6">
-                        <div class="media panel panel-default project-type" data-project-type="Scala">
+                        <div class="media panel panel-default choice project-type" data-project-type="Scala">
                             <div class="panel-body">
                                 <div class="media-left">
                                     <img class="logo" style="height: 30px" src="@routes.Assets.versioned("images/scala_icon.png")">
                                 </div>
                                 <div class="media-body">
+                                    <div class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></div>
                                     <h4 class="media-heading">Scala</h4>
                                     <p>
                                         Get started with your first Scala application
@@ -64,7 +66,7 @@
                         </div>
                     </div>
                     <div class="col-xs-6">
-                        <div class="media panel panel-default project-type" data-project-type="Spark">
+                        <div class="media panel panel-default choice project-type" data-project-type="Spark">
                             <div class="panel-body">
                                 <div class="media-left">
                                     <div class="media-left">
@@ -72,6 +74,7 @@
                                     </div>
                                 </div>
                                 <div class="media-body">
+                                    <div class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></div>
                                     <h4 class="media-heading">Spark</h4>
                                     <p>
                                         Fast (and big) data with style using Spark
@@ -82,7 +85,194 @@
                     </div>
                 </div>
             </div>
+            <div class="step-2" style="display: none">
+                <div class="row">
+                    <div class="col-xs-2 summary"></div>
+                    <div class="col-xs-10">
+                        <h4>Choose a build tool</h4>
+                            <div class="btn btn-default btn-sm back"><span class="glyphicon glyphicon-chevron-left"></span> Back </div>
+                            <div class="row choices">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="step-3" style="display: none">
+                <div class="row">
+                    <div class="col-xs-2 summary"></div>
+                    <div class="col-xs-10">
+                        <h4>Enter project details</h4>
+                        <div class="btn btn-default btn-sm back"><span class="glyphicon glyphicon-chevron-left"></span> Back </div>
+                        <div class="details">
+                            <div class="form-group">
+                                <label for="name">Project Name</label>
+                                <input id="name" type="text" class="form-control" value="">
+                            </div>
+                            <div class="form-group">
+                                <label for="organization">Organization</label>
+                                <input id="organization" type="text" class="form-control" value="">
+                            </div>
+                        </div>
+                        <div id="create" class="btn btn-primary btn-lg">Create project</div>
+                    </div>
+                </div>
         </div>
     </div>
-    
+
+    <script language="JavaScript">
+
+        var state = {
+                projectName: "MyProject",
+                organization: "org.example"
+            },
+            projects = [{
+                name: "Akka",
+                summary: "Akka starter project",
+                buildTools: ["SBT", "Maven", "Gradle"],
+                languages: ["Scala", "Java"]
+            }, {
+                name: "Play",
+                summary: "Play framework web application",
+                buildTools: ["SBT"],
+                languages: ["Scala", "Java"]
+            }, {
+                name: "Spark",
+                summary: "Spark fast data processing",
+                buildTools: ["SBT"],
+                languages: ["Scala", "Java"]
+            }, {
+                name: "Scala",
+                summary: "Minimal Scala application",
+                buildTools: ["SBT", "Maven", "Gradle"],
+                languages: ["Scala"]
+            }],
+            buildTools = [{
+                name: "SBT",
+                logo: "@routes.Assets.versioned("images/sbt_icon.svg")",
+                summary: "The de facto build tool in Scala",
+                requirements: "You need to have Java 8 installed"
+            },{
+                name: "Maven",
+                logo: "@routes.Assets.versioned("images/maven_logo.png")",
+                summary: "A very common build tool in the Java world",
+                requirements: "You need to have Java and Maven installed"
+            },{
+                name: "Gradle",
+                logo: "@routes.Assets.versioned("images/gradle_icon.png")",
+                summary: "A popular build tool based on the Groovy programming language",
+                requirements: "You need to have Java and Gradle installed"
+            }]
+
+        $(".back").on('click', function() {
+            state.back()
+        })
+
+        $(".step-1 .choice").on('click', function(ev) {
+            var selected = $(ev.currentTarget).attr("data-project-type")
+            var project = projects.find(function(elem) { return elem.name == selected })
+            state.project = project
+            $(".step-1").hide()
+
+            if (project.buildTools.length == 1) {
+                // no need to choose
+                state.buildTool = project.buildTools[0];
+                state.back = function() {
+                    state.project = undefined
+                    state.buildTool = undefined
+                    $(".step-3").hide()
+                    $(".step-1").show()
+                }
+                enterDetails()
+
+            } else {
+                 state.back = function() {
+                    state.project = undefined
+                    $(".step-2").hide()
+                    $(".step-1").show()
+                }
+                chooseBuildTool(project.buildTools)
+            }
+
+        });
+
+        function chooseBuildTool(selectableToolNames) {
+            var selectableTools = buildTools.filter(function(tool) {
+                return selectableToolNames.find(function(name) { return name == tool.name })
+            })
+
+            $(".step-2 .choices").empty()
+
+            $(".step-2 .summary").empty()
+            $(".step-2 .summary").append($("<p><h4>Project type:</h4>" + state.project.summary + "</p>"))
+
+            selectableTools.forEach(function(tool) {
+                $(".step-2 .choices").append(
+                    $('<div class="col-xs-6">' +
+                      '<div class="media panel panel-default choice project-type" data-build-tool="' + tool.name + '">' +
+                            '<div class="panel-body">' +
+                                '<div class="media-left">' +
+                                    '<div class="media-left">' +
+                                        '<img class="logo" style="max-height: 50px" src="' + tool.logo + '">' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="media-body">' +
+                                    '<div class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></div>' +
+                                    '<h4 class="media-heading">' + tool.name + '</h4>' +
+                                    '<p>' + tool.summary + '</p>' +
+                                    '<p><b>Requirements:</b>' + tool.requirements + "</p>" +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    "</div>")
+
+                )
+            })
+
+            $(".step-2 .choice").on('click', function(ev) {
+                var selected = $(ev.currentTarget).attr("data-build-tool")
+                var tool = buildTools.find(function(elem) { return elem.name == selected })
+                state.buildTool = tool
+                $(".step-2").hide()
+
+                var prevBack = state.back
+                state.back = function() {
+                    state.buildTool = undefined
+                    $(".step-3").hide()
+                    $(".step-2").show()
+                    state.back = prevBack
+                }
+                enterDetails()
+            })
+
+            $(".step-2").show()
+        }
+
+        // sync name and org whenever they change
+        $("#name").on('change', function(ev) {
+           state.projectName = ev.target.value
+        })
+        $("#organization").on('change', function(ev) {
+           state.organization = ev.target.value
+        })
+
+        function enterDetails() {
+            $(".step-3").show()
+
+            $(".step-3 .summary").empty()
+            $(".step-3 .summary").append($("<p><h4>Project type:</h4>" + state.project.summary + "</p>"))
+            $(".step-3 .summary").append($("<p><h4>Build tool:</h4>" + state.buildTool.name + "</p>"))
+
+
+            $("#name").val(state.projectName)
+            $("#organization").val(state.organization)
+        }
+
+        $("#create").on('click', function() {
+            var generatorUrl = "generate/" + state.project.name
+                + "/" + state.buildTool.name
+                + "/" + encodeURIComponent(state.projectName)
+                + "/" + encodeURIComponent(state.organization)
+
+            window.location.href = generatorUrl
+        })
+    </script>
 }
