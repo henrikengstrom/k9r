@@ -16,3 +16,6 @@ project/plugins/project/
 .idea/
 *.iml
 *.iws
+
+#OSX
+.DS_Store
