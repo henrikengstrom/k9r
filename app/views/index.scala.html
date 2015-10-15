@@ -1,7 +1,88 @@
-@(message: String)
+@()
 
-@main("Welcome to Play") {
+@main("Typesafe Kickstartr") {
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <img class="logo" src="@routes.Assets.versioned("images/typesafe_icon_reverse.svg")"> <span class="name">Typesafe Kickstartr</span>
+        </div>
+    </nav>
 
-    @play20.welcome(message)
+    <div class="container">
+        <div class="well">
+            Kickstartr bootstraps a project to you get started writing reactive applications in no time.
+        </div>
 
+
+        <div class="guide">
+            <div class="step-1">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="media panel panel-default project-type" data-project-type="Akka">
+                            <div class="panel-body">
+                                <div class="media-left">
+                                    <img class="logo" style="height: 20px" src="@routes.Assets.versioned("images/akka_icon.png")">
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading">Akka</h4>
+                                    <p>
+                                        Start creating message driven reactive applications with the actor model.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="media panel panel-default project-type" data-project-type="Play">
+                            <div class="panel-body">
+                                <div class="media-left">
+                                    <img class="logo" src="@routes.Assets.versioned("images/play_icon.svg")">
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading">Play framework</h4>
+                                    <p>
+                                        Build reactive web applications with ease and style
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="media panel panel-default project-type" data-project-type="Scala">
+                            <div class="panel-body">
+                                <div class="media-left">
+                                    <img class="logo" style="height: 30px" src="@routes.Assets.versioned("images/scala_icon.png")">
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading">Scala</h4>
+                                    <p>
+                                        Get started with your first Scala application
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="media panel panel-default project-type" data-project-type="Spark">
+                            <div class="panel-body">
+                                <div class="media-left">
+                                    <div class="media-left">
+                                        <img class="logo" style="height: 50px" src="@routes.Assets.versioned("images/spark_icon.png")">
+                                    </div>
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading">Spark</h4>
+                                    <p>
+                                        Fast (and big) data with style using Spark
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 }
