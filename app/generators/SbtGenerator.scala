@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class SbtGenerator extends Generator {
   override def generate(projectDescription: ProjectDescription): Future[File] = {
     for {
-     directory <- makeProjectBase(projectDescription)
+     directory <- makeProjectBase(projectDescription.projectType)
       _ <- generateSbtFiles(projectDescription, directory)
     } yield directory
   }
