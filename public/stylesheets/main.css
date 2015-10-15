@@ -1,0 +1,30 @@
+#kickstartr {
+    font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif
+}
+
+.navbar-static-top {
+    background-color: rgb(15,43,63);
+    padding-top: 20px;
+    padding-bottom: 20px;
+    color: #ffffff;
+}
+
+.navbar-static-top .logo {
+    height: 20px
+}
+
+.navbar-static-top .name {
+    font-weight: bold;
+}
+
+.guide .panel-body {
+    min-height: 110px;
+}
+
+.guide .logo {
+    height: 40px;
+}
+
+.guide .media-left {
+    width: 150px;
+}

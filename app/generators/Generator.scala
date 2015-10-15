@@ -1,17 +1,19 @@
 package generators
 
-import java.io.File
-import java.nio.file.FileSystems
-
 import models._
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import java.io.File
+import java.nio.file._
+import java.nio.file.attribute.BasicFileAttributes
+
 import scala.concurrent.Future
 import scala.util.Random
 
 trait Generator {
-  val currentPath = new File(".").getCanonicalFile.getCanonicalPath
-  
+  import Generator._
+
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   def generate(projectDescription: ProjectDescription): Future[File]
 
   def makeProjectBase(projectType: String): Future[File] = {
@@ -19,9 +21,9 @@ trait Generator {
 
     Future {
       val fileSystem = FileSystems.getDefault
-      val source =  fileSystem.getPath(currentPath, "resources")
+      val source =  fileSystem.getPath(currentPath, projectType)
       val target = fileSystem.getPath(currentPath, randomName)
-      // COPY THE SHIZZLE
+      copyDir(source, target)
       target.toFile
     }
   }
@@ -32,4 +34,26 @@ trait Generator {
 object Generator {
   final val Standard = "resources-standard"
   final val Play = "resources-play"
+
+  val currentPath = new File(".").getCanonicalFile.getCanonicalPath
+
+  def copyDir(src: Path, dest: Path) {
+    val fileVisitor = new SimpleFileVisitor[Path]() {
+      override def visitFile(file: Path, attributes: BasicFileAttributes): FileVisitResult = {
+        copy(file)
+        FileVisitResult.CONTINUE
+      }
+      override def preVisitDirectory(file: Path, attributes: BasicFileAttributes): FileVisitResult = {
+        copy(file)
+        FileVisitResult.CONTINUE
+      }
+
+      private def copy(file: Path) {
+        val pathInDest = dest.resolve(src.relativize(file).toString)
+        Files.copy(file, pathInDest, StandardCopyOption.REPLACE_EXISTING)
+      }
+    }
+
+    Files.walkFileTree(src, fileVisitor)
+  }
 }
