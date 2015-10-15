@@ -13,7 +13,7 @@ import java.io.IOException
 trait Generator {
   import Generator._
 
-  import scala.concurrent.ExecutionContext.Implicits.global
+  import global.Dispatchers.ioDispatcher
 
   def generate(projectDescription: ProjectDescription): Future[File]
 

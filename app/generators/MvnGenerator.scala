@@ -8,9 +8,10 @@ import models.ProjectDescription
 
 import scala.concurrent.Future
 
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object MvnGenerator extends Generator {
+
+  import global.Dispatchers.ioDispatcher
 
   def generate(projectDescription: ProjectDescription): Future[File] = {
     makeProjectBase(projectDescription.projectType) flatMap { folder =>
