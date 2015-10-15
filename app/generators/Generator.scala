@@ -18,8 +18,6 @@ trait Generator {
   def generate(projectDescription: ProjectDescription): Future[File]
 
   def makeProjectBase(projectType: ProjectType): Future[File] = {
-    def randomName: String = s"tmp-${System.currentTimeMillis}-${Random.nextLong}-k9r"
-
     def mapProjectType(pt: ProjectType): String = pt match {
       case models.Play => PlayResources
       case _ => StandardResources
