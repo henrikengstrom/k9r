@@ -22,7 +22,7 @@ trait Generator {
       case models.Play => PlayResources
       case _ => StandardResources
     }
-    
+
     Future {
       val source =  currentPath.resolve(mapProjectType(projectType))
       val target = currentPath.resolve(randomName)
@@ -52,9 +52,9 @@ trait Generator {
       } finally {
         zipFS.close()
       }
-      
+
       Generator.deleteDir(folderToZip)
-      
+
       zipFile.toFile()
     }
   }
@@ -92,7 +92,7 @@ object Generator {
 
     Files.walkFileTree(src, fileVisitor)
   }
-  
+
   def deleteDir(src: Path) {
     val fileVisitor = new SimpleFileVisitor[Path]() {
       override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
