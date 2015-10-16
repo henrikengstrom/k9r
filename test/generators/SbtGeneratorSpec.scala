@@ -37,19 +37,19 @@ class SbtGeneratorSpec extends FunSpec with Matchers {
   describe("Dependency formatter") {
     it("should format (1)") {
       val dep1 = Dependency("a", "b", "c")
-      SbtGenerator.formatDep(dep1) should equal(""""b" %% "a" % "c"""")
+      SbtGenerator.formatDep(dep1) should equal(""""a" %% "b" % "c"""")
     }
     it("should format (2)") {
       val dep1 = Dependency("a", "b", "c", None, false)
-      SbtGenerator.formatDep(dep1) should equal(""""b" % "a" % "c"""")
+      SbtGenerator.formatDep(dep1) should equal(""""a" % "b" % "c"""")
     }
     it("should format (3)") {
       val dep1 = Dependency("a", "b", "c", Some("test"))
-      SbtGenerator.formatDep(dep1) should equal(""""b" %% "a" % "c" % "test"""")
+      SbtGenerator.formatDep(dep1) should equal(""""a" %% "b" % "c" % "test"""")
     }
     it("should format (4)") {
       val dep1 = Dependency("a", "b", "c", Some("test"), false)
-      SbtGenerator.formatDep(dep1) should equal(""""b" % "a" % "c" % "test"""")
+      SbtGenerator.formatDep(dep1) should equal(""""a" % "b" % "c" % "test"""")
     }
 
   }

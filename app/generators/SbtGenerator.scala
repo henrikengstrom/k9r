@@ -92,6 +92,17 @@ object SbtGenerator extends Generator {
     }
   }
 
+  /**
+   * Utility method used in the template, will generate dependency list
+   * @param projectDescription
+   * @return String
+   */
+  def generateDeps(projectDescription: ProjectDescription): String = {
+    val start = "Seq("
+    val end = ")"
+    start + projectDescription.dependencies.map(formatDep).mkString(",\n") + end
+  }
+
   def formatDep(dep: Dependency) = {
     val scopeString = dep.scope.fold("")(s => s""" % "$s"""")
     val seperator = if (dep.addScalaVersion) "%%" else "%"
