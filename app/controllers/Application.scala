@@ -1,7 +1,7 @@
 package controllers
 
-import generators.{ Generator, MvnGenerator, SbtGenerator }
-import models.{ BuildTool, ProjectDescription }
+import generators.{Generator, MvnGenerator, SbtGenerator}
+import models.{BuildTool, ProjectDescription}
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -48,8 +48,8 @@ class Application extends Controller {
       tool <- findOrElse(buildTool, nameToBuildTool, s"Unknown build tool $buildTool").right
       _ <- proj.validateCombination(tool, lang).toLeft(()).right
     } yield {
-      ProjectDescription(proj, tool, lang, name, organization)
-    }
+        ProjectDescription(proj, tool, lang, name, organization)
+      }
 
     errorOrDesc.fold(
       error => Future.successful(BadRequest(error)),
@@ -65,5 +65,6 @@ class Application extends Controller {
 
   def findOrElse[T](key: String, map: Map[String, T], errorMsg: => String): Either[String, T] =
     map.get(key.toLowerCase).fold[Either[String, T]](Left(errorMsg))(Right(_))
+
 
 }

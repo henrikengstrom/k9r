@@ -1,7 +1,7 @@
 package views
 
-import models.{ BuildTool, ProjectType }
-import play.api.libs.json.{ Json, Writes }
+import models.{BuildTool, ProjectType}
+import play.api.libs.json.{Json, Writes}
 
 /**
  * Used to push the project type descriptions to json in the pages of the app
