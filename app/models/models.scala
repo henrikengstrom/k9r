@@ -191,6 +191,7 @@ sealed trait Language {
 
 case object Scala extends Language {
   def version = "2.11.6"
+  def shortVersion = "2.11"
 
   def languageName: String = "scala"
 }
