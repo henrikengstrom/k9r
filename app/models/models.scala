@@ -202,8 +202,9 @@ case object Java extends Language {
   def languageName: String = "java"
 }
 
-case class Dependency(artifactId: String,
+case class Dependency(
   groupId: String,
+  artifactId: String,
   version: String,
   scope: Option[String] = None,
   addScalaVersion: Boolean = true)
