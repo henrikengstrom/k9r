@@ -1,6 +1,7 @@
 package models
 
 import generators.CodeGenerator
+import models.Feature
 
 case class ProjectDescription(
     projectType: ProjectType,
@@ -76,8 +77,8 @@ case object Akka extends ProjectType {
 
   def dependencies =
     List(
-      Dependency("com.typesafe.akka", "akka-actor", akkaVersion),
-      Dependency("com.typesafe.akka", "akka-testkit", akkaVersion, Some("test"))
+      Dependency("com.typesafe.akka", "akka-actor", akkaVersion, addScalaVersion = true),
+      Dependency("com.typesafe.akka", "akka-testkit", akkaVersion, Some("test"), addScalaVersion = true)
     )
 
   def supportedLanguages: Set[Language] = Set(Scala, Java)
@@ -85,11 +86,32 @@ case object Akka extends ProjectType {
 
   def sampleCodeGenerators(language: Language): List[CodeGenerator] = Nil
 
+  private val akkaCluster = Dependency("com.typesafe.akka", "akka-cluster", akkaVersion, addScalaVersion = true)
+
   override def featureChoices = List(
     Feature(
       "Clustering",
       "Run Akka across multiple connected nodes",
-      project => Right(project.withDependency(Dependency("com.typesafe.akka", "akka-cluster", akkaVersion)))
+      project => Right(project.withDependency(akkaCluster))
+    ),
+    Feature(
+      "Cluster Sharding",
+      "Shard actors across your akka cluster",
+      project => Right(project.withDependency(akkaCluster)
+        .withDependency(Dependency("com.typesafe.akka", "akka-cluster-sharding", akkaVersion, addScalaVersion = true)))
+
+    ),
+    Feature(
+      "Distributed Data",
+      "Eventually consistent distributed data across your akka cluster",
+      project => Right(project.withDependency(akkaCluster)
+        .withDependency(Dependency("com.typesafe.akka", "akka-distributed-data-experimental", akkaVersion, addScalaVersion = true)))
+    ),
+    Feature(
+      "Persistence",
+      "Make actor state persistent",
+      project => Right(project.withDependency(akkaCluster)
+        .withDependency(Dependency("com.typesafe.akka", "akka-persistence", akkaVersion, addScalaVersion = true)))
     )
   )
 
