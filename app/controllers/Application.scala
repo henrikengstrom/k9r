@@ -4,7 +4,6 @@ import generators.{ Generator, MvnGenerator, SbtGenerator }
 import models.{ BuildTool, ProjectDescription }
 import play.api.mvc._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import generators.GradleGenerator
 
@@ -50,6 +49,8 @@ class Application extends Controller {
     } yield {
       ProjectDescription(proj, tool, lang, name, organization)
     }
+
+    import global.Dispatchers.ioDispatcher
 
     errorOrDesc.fold(
       error => Future.successful(BadRequest(error)),

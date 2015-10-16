@@ -4,7 +4,7 @@ import models._
 import java.io.File
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Random
 import java.util.{ HashMap => jHashMap }
 import java.net.URI
@@ -13,11 +13,9 @@ import java.io.IOException
 trait Generator {
   import Generator._
 
-  import global.Dispatchers.ioDispatcher
+  def generate(projectDescription: ProjectDescription)(implicit ec: ExecutionContext): Future[File]
 
-  def generate(projectDescription: ProjectDescription): Future[File]
-
-  def makeProjectBase(projectType: ProjectType): Future[File] = {
+  def makeProjectBase(projectType: ProjectType)(implicit ec: ExecutionContext): Future[File] = {
     def mapProjectType(pt: ProjectType): String = pt match {
       case models.Play => PlayResources
       case _ => StandardResources
@@ -40,7 +38,7 @@ trait Generator {
   /**
    * Zip the given folder, delete the folder and return the zip file.
    */
-  def zip(folder: File, folderName: String): Future[File] = {
+  def zip(folder: File, folderName: String)(implicit ec: ExecutionContext): Future[File] = {
     Future {
       val folderToZip = folder.toPath()
 
