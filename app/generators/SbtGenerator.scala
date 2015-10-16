@@ -10,11 +10,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object SbtGenerator extends Generator {
+
   override def generate(projectDescription: ProjectDescription): Future[File] = {
     for {
       directory <- makeProjectBase(projectDescription.projectType)
       toZip <- generateSbtFiles(projectDescription, directory)
-      zipped <- zip(toZip)
+      zipped <- zip(toZip, projectDescription.projectType.dirName)
     } yield zipped
   }
 
@@ -89,6 +90,7 @@ object SbtGenerator extends Generator {
     val seperator = if (dep.addScalaVersion) "%%" else "%"
     s""""${dep.groupId}" ${seperator} "${dep.artifactId}" % "${dep.version}"${scopeString}"""
   }
+
 
   def renderToFile(content: Content, directory: File, filename: String): Unit =
   // TODO there must be a better way to write a string to a file..
