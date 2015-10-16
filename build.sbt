@@ -13,6 +13,9 @@ routesGenerator := InjectedRoutesGenerator
 // Includes templates in the compilation
 sourceDirectories in (Compile, TwirlKeys.compileTemplates) += baseDirectory.value / "templates"
 
+// use scalariform source code formatting
+scalariformSettings
+
 // Adds resources to dist
 import NativePackagerHelper._
 mappings in Universal ++= contentOf(baseDirectory.value / "resources")

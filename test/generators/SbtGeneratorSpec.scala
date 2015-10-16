@@ -14,22 +14,22 @@ class SbtGeneratorSpec extends FunSpec with Matchers {
   describe("Sbt rendered build.sbt") {
     it("should contain properties") {
       val rendered = sbt.txt.scalabuildsbt(testDescription).body
-      rendered should include (testDescription.organization)
-      rendered should include (testDescription.name)
+      rendered should include(testDescription.organization)
+      rendered should include(testDescription.name)
 
     }
   }
 
   describe("Sbt Generator") {
-      it("should generate File") {
+    it("should generate File") {
 
-        val tmpdir = new File(System.getProperty("java.io.tmpdir"))
-        val f = SbtGenerator.generateSbtFiles(testDescription, tmpdir)
+      val tmpdir = new File(System.getProperty("java.io.tmpdir"))
+      val f = SbtGenerator.generateSbtFiles(testDescription, tmpdir)
 
-        val dirWithFiles = Await.result(f, 30 seconds)
-        System.out.println(s"Wrote to ${dirWithFiles.getCanonicalPath}")
-        assert(new File(dirWithFiles, "build.sbt").exists())
-      }
+      val dirWithFiles = Await.result(f, 30 seconds)
+      System.out.println(s"Wrote to ${dirWithFiles.getCanonicalPath}")
+      assert(new File(dirWithFiles, "build.sbt").exists())
+    }
 
   }
 

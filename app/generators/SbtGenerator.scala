@@ -1,7 +1,7 @@
 package generators
 
 import java.io.File
-import java.nio.file.{Files, Paths, StandardOpenOption}
+import java.nio.file.{ Files, Paths, StandardOpenOption }
 
 import models._
 import play.twirl.api.Content
@@ -84,16 +84,14 @@ object SbtGenerator extends Generator {
     }
   }
 
-
   def formatDep(dep: Dependency) = {
     val scopeString = dep.scope.fold("")(s => s""" % "$s"""")
     val seperator = if (dep.addScalaVersion) "%%" else "%"
     s""""${dep.groupId}" ${seperator} "${dep.artifactId}" % "${dep.version}"${scopeString}"""
   }
 
-
   def renderToFile(content: Content, directory: File, filename: String): Unit =
-  // TODO there must be a better way to write a string to a file..
+    // TODO there must be a better way to write a string to a file..
     Files.write(
       Paths.get((new File(directory, filename)).toURI),
       content.body.getBytes("utf-8"),
