@@ -10,18 +10,16 @@ import java.nio.charset.StandardCharsets
 
 trait CodeGenerator {
 
-  def generateCode(projectDescription: ProjectDescription, root: Path): Future[Path]
+  def generateCode(projectDescription: ProjectDescription, root: Path): Path
 
 }
 
 abstract class TextCodeGenerator extends CodeGenerator {
-  def generateCode(projectDescription: ProjectDescription, root: Path): Future[Path] = {
-    Future {
-      val content = textResult(projectDescription)
-      val file = destFile(projectDescription, root)
-      Files.write(file, content.getBytes(StandardCharsets.UTF_8))
-      file
-    }
+  def generateCode(projectDescription: ProjectDescription, root: Path): Path = {
+    val content = textResult(projectDescription)
+    val file = destFile(projectDescription, root)
+    Files.write(file, content.getBytes(StandardCharsets.UTF_8))
+    file
   }
 
   def textResult(projectDescription: ProjectDescription): String
