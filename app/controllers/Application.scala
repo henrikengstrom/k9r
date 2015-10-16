@@ -1,8 +1,9 @@
 package controllers
 
-import generators.{MvnGenerator, Generator}
+import generators.{Generator, MvnGenerator, SbtGenerator}
 import models.{BuildTool, ProjectDescription}
 import play.api.mvc._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import generators.GradleGenerator
@@ -28,7 +29,10 @@ class Application extends Controller {
   )
 
   val buildToolGenerators: Map[BuildTool, Generator] =
-    Map(models.Maven -> MvnGenerator, models.Gradle -> GradleGenerator)
+    Map(
+      models.Maven -> MvnGenerator,
+      models.Gradle -> GradleGenerator,
+      models.SBT -> SbtGenerator)
 
   val projectTypes = List(models.Akka, models.Play, models.SimpleScala, models.Spark)
   val buildTools = List(models.SBT, models.Maven, models.Gradle)
@@ -61,4 +65,6 @@ class Application extends Controller {
 
   def findOrElse[T](key: String, map: Map[String, T], errorMsg: => String): Either[String, T] =
     map.get(key.toLowerCase).fold[Either[String, T]](Left(errorMsg))(Right(_))
+
+
 }

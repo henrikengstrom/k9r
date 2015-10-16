@@ -47,7 +47,7 @@ case object Akka extends ProjectType {
   def version = Some("2.4.0")
   def dirName: String = "akka-project"
   def dependencies =
-    List(Dependency("com.typesafe.akka", "akka-actor_2.11", "2.4.0"))
+    List(Dependency("com.typesafe.akka", "akka-actor", "2.4.0"), Dependency("com.typesafe.akka", "akka-testkit", "2.4.0", Some("test")))
 
   def supportedLanguages: Set[Language] = Set(Scala, Java)
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
@@ -116,4 +116,8 @@ case object Java extends Language {
   def languageName: String = "java"
 }
 
-case class Dependency(groupId: String, artifactId: String, version: String)
+case class Dependency(artifactId: String,
+                      groupId: String,
+                      version: String,
+                      scope: Option[String] = None,
+                      addScalaVersion: Boolean = true)

@@ -17,6 +17,10 @@
                 <groupId>@d.groupId</groupId>
                 <artifactId>@d.artifactId</artifactId>
                 <version>@d.version</version>
+                <version>@d.version</v ersion>
+                @if(d.scope.isDefined) {
+                <scope>d.scope.get</scope>
+                }
             </dependency>
         }
 
