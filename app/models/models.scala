@@ -104,7 +104,6 @@ case object Akka extends ProjectType {
       "Shard actors across your akka cluster",
       project => Right(project.withDependency(akkaCluster)
         .withDependency(Dependency("com.typesafe.akka", "akka-cluster-sharding", akkaVersion, addScalaVersion = true)))
-
     ),
     Feature(
       "Distributed Data",
@@ -149,7 +148,8 @@ case object SimpleScala extends ProjectType {
 
   def dirName: String = "scala-project"
 
-  def dependencies = Nil
+  // plain Scala gets scalatest as a default dependency. this is in line with the hello-scala activator template
+  def dependencies = List(Dependency("org.scalatest", "scalatest", "2.2.4", Some("test")))
 
   override def validateCombination(tool: BuildTool, language: Language): Option[String] =
     if (language != Scala) Some("Scala language is the only language for the simple Scala project (well duh!)")
@@ -165,6 +165,14 @@ case object SimpleScala extends ProjectType {
       Nil
     }
   }
+
+  override def featureChoices = List(
+    Feature(
+      "Slick",
+      "Connect to relational databases with Slick",
+      project => Right(project.withDependency(Dependency("com.typesafe.slick", "slick", "3.1.0")))
+    ))
+
 }
 
 sealed trait BuildTool {
