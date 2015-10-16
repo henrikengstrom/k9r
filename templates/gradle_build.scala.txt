@@ -1,0 +1,13 @@
+@(projectDescription: ProjectDescription)
+
+apply plugin: '@projectDescription.language.languageName'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile group: 'org.scala-lang', name: 'scala-library', version: '@projectDescription.language.version'
+@projectDescription.projectType.dependencies.map { d =>
+  compile group: '@d.groupId', name: '@d.artifactId', version: '@d.version'
+}}
