@@ -1,5 +1,7 @@
 package models
 
+import generators.CodeGenerator
+
 case class ProjectDescription(
   projectType: ProjectType,
   buildTool: BuildTool,
@@ -24,6 +26,8 @@ sealed trait ProjectType {
    *         project type or None if they are ok
    */
   def validateCombination(tool: BuildTool, language: Language): Option[String] = None
+  
+  def sampleCodeGenerators(language: Language): List[CodeGenerator]
 }
 
 case object Play extends ProjectType {
@@ -43,6 +47,7 @@ case object Play extends ProjectType {
   def supportedLanguages: Set[Language] = Set(Scala, Java)
   def supportedBuildTools: Set[BuildTool] = Set(SBT)
 
+  def sampleCodeGenerators(language: Language): List[CodeGenerator] = Nil
 }
 
 case object Akka extends ProjectType {
@@ -58,6 +63,8 @@ case object Akka extends ProjectType {
 
   def supportedLanguages: Set[Language] = Set(Scala, Java)
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
+
+  def sampleCodeGenerators(language: Language): List[CodeGenerator] = Nil
 }
 
 case object Spark extends ProjectType {
@@ -72,6 +79,8 @@ case object Spark extends ProjectType {
 
   def supportedLanguages: Set[Language] = Set(Scala, Java)
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
+
+  def sampleCodeGenerators(language: Language): List[CodeGenerator] = Nil
 }
 
 case object SimpleScala extends ProjectType {
@@ -90,6 +99,14 @@ case object SimpleScala extends ProjectType {
 
   def supportedLanguages: Set[Language] = Set(Scala)
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
+
+  def sampleCodeGenerators(language: Language): List[CodeGenerator] = {
+      if (language == Scala) {
+        List(CodeGenerator.SimpleScalaMainScala)
+      } else {
+        Nil
+      }
+    }
 }
 
 sealed trait BuildTool {

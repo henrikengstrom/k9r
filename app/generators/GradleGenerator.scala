@@ -6,23 +6,27 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.charset.StandardCharsets
 import models.ProjectDescription
+import models.ProjectDescription
+import java.nio.file.Path
 
 object GradleGenerator extends Generator {
 
   def generate(projectDescription: ProjectDescription)(implicit ec: ExecutionContext): Future[File] = {
     makeProjectBase(projectDescription.projectType).map { folder =>
+
+      val root = folder.toPath()
+
+      CodeGenerator.mainPackagePath(root, projectDescription).toFile().mkdirs()
+      CodeGenerator.testPackagePath(root, projectDescription).toFile().mkdirs()
+
       val gradleBuildContent: String = txt.gradle_build.render(projectDescription).body
-      val gradleBuildFile = folder.toPath().resolve("build.gradle")
+      val gradleBuildFile = root.resolve("build.gradle")
       Files.write(gradleBuildFile, gradleBuildContent.getBytes(StandardCharsets.UTF_8))
 
-      List("main", "test").map { s =>
-        folder.toPath()
-          .resolve("src")
-          .resolve(s)
-          .resolve(projectDescription.language.languageName)
-          .resolve(projectDescription.organization.replace(".", "/"))
-          .resolve(projectDescription.name.toLowerCase())
-      }.foreach { _.toFile().mkdirs() }
+      projectDescription.projectType.sampleCodeGenerators(projectDescription.language).foreach { g =>
+        g.generateCode(projectDescription, root)
+      }
+
       folder
     }.flatMap {
       zip(_, projectDescription.projectType.dirName)

@@ -1,0 +1,10 @@
+@(projectDescription: ProjectDescription)
+
+package @{projectDescription.organization}.@{projectDescription.name.toLowerCase}
+
+object @{projectDescription.name} {
+
+  def main(argv: Array[String]): Unit = {
+    println("Hello from @{projectDescription.name}'s world") 
+  }
+}
