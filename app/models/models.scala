@@ -68,4 +68,4 @@ case object Java extends Language {
   def languageName: String = "java"
 }
 
-case class Dependency(artifactId: String, groupId: String, version: String)
+case class Dependency(groupId: String, artifactId: String, version: String)
