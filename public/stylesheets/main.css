@@ -19,8 +19,8 @@
     font-size: 24pt;
 }
 
-.guide .panel-body {
-    min-height: 110px;
+.guide .choice {
+    min-height: 200px;
 }
 
 .guide .logo {

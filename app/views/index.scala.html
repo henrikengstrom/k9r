@@ -1,4 +1,6 @@
-@()
+@(projectTypes: List[ProjectType], buildTools: List[BuildTool])
+@import play.api.libs.json.Json
+@import views.JsonFormats._
 
 @main("Typesafe Kickstarter") {
     <nav class="navbar navbar-default navbar-static-top">
@@ -11,97 +13,55 @@
 
         @* first step static to make it nicely indexable *@
         <div class="guide">
-            <div class="step-1">
-                <div class="well">
-                    K9r bootstraps a project to you get started writing reactive applications in no time.
-                </div>
-
-                <div class="row choices">
-                    <div class="col-xs-6">
-                        <div class="media panel panel-default choice project-type" data-project-type="Akka">
-                            <div class="panel-body">
-                                <div class="media-left">
-                                    <img class="logo" style="height: 20px" src="@routes.Assets.versioned("images/akka_icon.png")">
-                                </div>
-                                <div class="media-body">
-                                    <div class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></div>
-                                    <h4 class="media-heading">Akka</h4>
-                                    <p>
-                                        Start creating message driven reactive applications with the actor model.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+            <div class="step-1 container">
+                <div class="row">
+                    <div class="col-xs-2 summary well">
+                        Bootstrap a project to you get started writing reactive applications in no time
                     </div>
-                    <div class="col-xs-6">
-                        <div class="media panel panel-default choice project-type" data-project-type="Play">
-                            <div class="panel-body">
-                                <div class="media-left">
-                                    <img class="logo" src="@routes.Assets.versioned("images/play_icon.svg")">
-                                </div>
-                                <div class="media-body">
-                                    <div class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></div>
-                                    <h4 class="media-heading">Play Framework</h4>
-                                    <p>
-                                        Build modern, reactive web applications with ease and style.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-6">
-                        <div class="media panel panel-default choice project-type" data-project-type="Scala">
-                            <div class="panel-body">
-                                <div class="media-left">
-                                    <img class="logo" style="height: 30px" src="@routes.Assets.versioned("images/scala_icon.png")">
-                                </div>
-                                <div class="media-body">
-                                    <div class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></div>
-                                    <h4 class="media-heading">Scala</h4>
-                                    <p>
-                                        Get started with your first Scala application
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-6">
-                        <div class="media panel panel-default choice project-type" data-project-type="Spark">
-                            <div class="panel-body">
-                                <div class="media-left">
-                                    <div class="media-left">
-                                        <img class="logo" style="height: 50px" src="@routes.Assets.versioned("images/spark_icon.png")">
+                    <div class="col-xs-10">
+                        <div class="row choices">
+                            @projectTypes.map { projectType =>
+                                <div class="col-xs-6">
+                                    <div class="media panel panel-default choice project-type" data-project-type="@projectType.name">
+                                        <div class="panel-body">
+                                            <div class="media-left">
+                                                <img class="logo"
+                                                    src="@routes.Assets.versioned("images/" + projectType.name.toLowerCase + "_icon.png")">
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></div>
+                                                <h3 class="media-heading">@projectType.name</h3>
+                                                <p class="lead">@projectType.tagline</p>
+                                                <p>@projectType.description</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="media-body">
-                                    <div class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></div>
-                                    <h4 class="media-heading">Spark</h4>
-                                    <p>
-                                        Fast (and big) data with style using Spark
-                                    </p>
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="step-2" style="display: none">
+            <div class="step-2 container" style="display: none">
                 <div class="row">
-                    <div class="col-xs-2 summary"></div>
+                    <div class="col-xs-2"><div class="summary well"></div></div>
                     <div class="col-xs-10">
-                        <h4>Choose a build tool</h4>
-                            <div class="btn btn-default btn-sm back"><span class="glyphicon glyphicon-chevron-left"></span> Back </div>
-                            <div class="row choices">
+                        <div class="row">
+                            <div class="btn btn-default btn-sm back pull-right"><span class="glyphicon glyphicon-chevron-left"></span> Back </div>
+                            <h4>Choose a build tool</h4>
+                            <div class="choices"></div>
                         </div>
                     </div>
+
                 </div>
             </div>
-            <div class="step-3" style="display: none">
+            <div class="step-3 container" style="display: none">
                 <div class="row">
-                    <div class="col-xs-2 summary"></div>
+                    <div class="col-xs-2 summary well"></div>
                     <div class="col-xs-10">
+
+                        <div class="btn btn-default btn-sm back pull-right"><span class="glyphicon glyphicon-chevron-left"></span> Back </div>
                         <h4>Enter project details</h4>
-                        <div class="btn btn-default btn-sm back"><span class="glyphicon glyphicon-chevron-left"></span> Back </div>
                         <div class="details">
 
                             <div class="form-group language-selection">
@@ -136,43 +96,8 @@
                 organization: "org.example",
                 language: "Scala"
             },
-            projects = [{
-                name: "Akka",
-                summary: "Akka starter project",
-                buildTools: ["SBT", "Maven", "Gradle"],
-                languages: ["Scala", "Java"]
-            }, {
-                name: "Play",
-                summary: "Play framework web application",
-                buildTools: ["SBT"],
-                languages: ["Scala", "Java"]
-            }, {
-                name: "Spark",
-                summary: "Spark fast data processing",
-                buildTools: ["SBT"],
-                languages: ["Scala", "Java"]
-            }, {
-                name: "Scala",
-                summary: "Minimal Scala application",
-                buildTools: ["SBT", "Maven", "Gradle"],
-                languages: ["Scala"]
-            }],
-            buildTools = [{
-                name: "SBT",
-                logo: "@routes.Assets.versioned("images/sbt_icon.svg")",
-                summary: "The de facto build tool in Scala",
-                requirements: "You need to have Java 8 installed"
-            },{
-                name: "Maven",
-                logo: "@routes.Assets.versioned("images/maven_logo.png")",
-                summary: "A very common build tool in the Java world",
-                requirements: "You need to have Java and Maven installed"
-            },{
-                name: "Gradle",
-                logo: "@routes.Assets.versioned("images/gradle_icon.png")",
-                summary: "A popular build tool based on the Groovy programming language",
-                requirements: "You need to have Java and Gradle installed"
-            }]
+            projects = @Html(Json.toJson(projectTypes).toString()),
+            buildTools = @Html(Json.toJson(buildTools).toString())
 
         $(".back").on('click', function() {
             state.back()
@@ -214,7 +139,7 @@
             $(".step-2 .choices").empty()
 
             $(".step-2 .summary").empty()
-            $(".step-2 .summary").append($("<p><h4>Project type:</h4>" + state.project.summary + "</p>"))
+            $(".step-2 .summary").append($("<p><h4>" + state.project.name + "</h4>" + state.project.summary + "</p>"))
 
             selectableTools.forEach(function(tool) {
                 $(".step-2 .choices").append(
@@ -223,7 +148,7 @@
                             '<div class="panel-body">' +
                                 '<div class="media-left">' +
                                     '<div class="media-left">' +
-                                        '<img class="logo" style="max-height: 50px" src="' + tool.logo + '">' +
+                                        '<img class="logo" style="max-height: 50px" src="/assets/images/' + tool.name.toLowerCase() + '_icon.png">' +
                                     '</div>' +
                                 '</div>' +
                                 '<div class="media-body">' +
@@ -273,7 +198,7 @@
             $(".step-3").show()
 
             $(".step-3 .summary").empty()
-            $(".step-3 .summary").append($("<p><h4>Project type:</h4>" + state.project.summary + "</p>"))
+            $(".step-3 .summary").append($("<p><h4>" + state.project.name + "</h4>" + state.project.summary + "</p>"))
             $(".step-3 .summary").append($("<p><h4>Build tool:</h4>" + state.buildTool.name + "</p>"))
 
             if (state.project.languages.length > 1) {

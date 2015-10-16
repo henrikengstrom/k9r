@@ -34,8 +34,11 @@ class Application extends Controller {
       models.Gradle -> GradleGenerator,
       models.SBT -> SbtGenerator)
 
+  val projectTypes = List(models.Akka, models.Play, models.SimpleScala, models.Spark)
+  val buildTools = List(models.SBT, models.Maven, models.Gradle)
+
   def index = Action {
-    Ok(views.html.index())
+    Ok(views.html.index(projectTypes, buildTools))
   }
 
   def generate(project: String, language: String, buildTool: String, name: String, organization: String) = Action.async { _ =>
