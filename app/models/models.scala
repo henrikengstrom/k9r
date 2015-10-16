@@ -26,7 +26,7 @@ sealed trait ProjectType {
    *         project type or None if they are ok
    */
   def validateCombination(tool: BuildTool, language: Language): Option[String] = None
-  
+
   def sampleCodeGenerators(language: Language): List[CodeGenerator]
 }
 
@@ -101,12 +101,12 @@ case object SimpleScala extends ProjectType {
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
 
   def sampleCodeGenerators(language: Language): List[CodeGenerator] = {
-      if (language == Scala) {
-        List(CodeGenerator.SimpleScalaMainScala)
-      } else {
-        Nil
-      }
+    if (language == Scala) {
+      List(CodeGenerator.SimpleScalaMainScala)
+    } else {
+      Nil
     }
+  }
 }
 
 sealed trait BuildTool {

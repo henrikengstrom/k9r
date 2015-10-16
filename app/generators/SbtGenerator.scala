@@ -57,9 +57,13 @@ object SbtGenerator extends Generator {
       new File(s"$path/src/main/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
       new File(s"$path/src/test/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
       //
+
+      val sbtprojectsubdir = new File(directory, "project")
+      if (!sbtprojectsubdir.exists()) sbtprojectsubdir.mkdir()
+
       Files.write(
-        Paths.get((new File(new File(directory, "project"), "build.properties")).toURI),
-        "sbt.version=0.13.8".getBytes("utf-8"), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
+        Paths.get(new File(sbtprojectsubdir, "build.properties").toURI),
+        "sbt.version=0.13.9".getBytes("utf-8"), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
       // just return the same directory, for type signature convenience / composability
       directory
     }
