@@ -41,7 +41,7 @@ class Application extends Controller {
       _ <- proj.validateCombination(tool, lang).toLeft(()).right
     } yield {
         ProjectDescription(proj, tool, lang, name, organization)
-    }
+      }
 
     errorOrDesc.fold(
       error => Future.successful(BadRequest(error)),
@@ -55,13 +55,6 @@ class Application extends Controller {
     )
   }
 
-
   def findOrElse[T](key: String, map: Map[String, T], errorMsg: => String): Either[String, T] =
     map.get(key.toLowerCase).fold[Either[String, T]](Left(errorMsg))(Right(_))
-
-
-
-
-
-
 }

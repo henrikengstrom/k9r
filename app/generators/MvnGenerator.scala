@@ -23,8 +23,8 @@ object MvnGenerator extends Generator {
       Files.write(pomXmlFile.toPath, pomXmlContent.getBytes(StandardCharsets.UTF_8))
 
       val path = folder.toPath.toString
-      new File(s"$path/src/main/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
-      new File(s"$path/src/test/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
+      new File(s"$path/src/main/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/") + s"/${projectDescription.name}/").mkdirs()
+      new File(s"$path/src/test/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/") + s"/${projectDescription.name}/").mkdirs()
 
       zip(folder, projectDescription.projectType.dirName)
     }

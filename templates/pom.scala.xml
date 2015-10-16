@@ -14,8 +14,8 @@
     <dependencies>
         @projectDescription.projectType.dependencies.map { d =>
             <dependency>
-                <artifactId>@d.artifactId</artifactId>
                 <groupId>@d.groupId</groupId>
+                <artifactId>@d.artifactId</artifactId>
                 <version>@d.version</version>
             </dependency>
         }
@@ -28,4 +28,30 @@
             </dependency>
         }
     </dependencies>
+
+    <build>
+        <plugins>
+            @if(projectDescription.language.languageName == "scala") {
+            <plugin>
+                <!-- configuration of the scala compiler -->
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmArgs>
+                        <jvmArg>-Xms512m</jvmArg>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                    </jvmArgs>
+                </configuration>
+            </plugin>
+            }
+        </plugins>
+    </build>
 </project>

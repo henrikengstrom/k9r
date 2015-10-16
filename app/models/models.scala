@@ -33,7 +33,7 @@ case object Akka extends ProjectType {
   def version = Some("2.4.0")
   def dirName: String = "akka-project"
   def dependencies =
-    List(Dependency("com.typesafe.akka", "akka-actor", "2.4.0"))
+    List(Dependency("com.typesafe.akka", "akka-actor_2.11", "2.4.0"))
 }
 case object Spark extends ProjectType {
   def version = Some("1.5.1")
