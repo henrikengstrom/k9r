@@ -1,7 +1,6 @@
 package models
 
 import generators.CodeGenerator
-import models.Feature
 
 case class ProjectDescription(
     projectType: ProjectType,

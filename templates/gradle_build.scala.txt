@@ -9,5 +9,5 @@ repositories {
 dependencies {
   compile group: 'org.scala-lang', name: 'scala-library', version: '@projectDescription.language.version'
 @projectDescription.dependencies.map { d =>
-  compile group: '@d.groupId', name: '@d.artifactId', version: '@d.version'
+  compile group: '@d.groupId', name: '@{d.artifactId}@{if (d.addScalaVersion) s"_${models.Scala.shortVersion}"}', version: '@d.version'
 }}
