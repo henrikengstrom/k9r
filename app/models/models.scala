@@ -38,8 +38,8 @@ case object Play extends ProjectType {
 
   def supportedLanguages: Set[Language] = Set(Scala, Java)
   def supportedBuildTools: Set[BuildTool] = Set(SBT)
-
 }
+
 case object Akka extends ProjectType {
   def name = "Akka"
   def tagline = "Concurrent and scalable apps with the actor model"
@@ -52,17 +52,20 @@ case object Akka extends ProjectType {
   def supportedLanguages: Set[Language] = Set(Scala, Java)
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
 }
+
 case object Spark extends ProjectType {
   def name = "Spark"
   def tagline = "High speed processing of your big data"
   def description = "Spark is a fast and very general engine for large-scale data processing"
-  def version = Some("1.5.1")
+  def version = Some("1.4.1")
   def dirName: String = "spark-project"
-  def dependencies = Nil
+  def dependencies =
+    List(Dependency("org.apache.spark", "spark-core_2.11", "1.4.1"))
 
   def supportedLanguages: Set[Language] = Set(Scala, Java)
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
 }
+
 case object SimpleScala extends ProjectType {
   def name = "Scala"
   def tagline = "Minimal project skeleton for a pure Scala application"
@@ -78,7 +81,6 @@ case object SimpleScala extends ProjectType {
   def supportedLanguages: Set[Language] = Set(Scala)
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
 }
-
 
 sealed trait BuildTool {
   def name: String
