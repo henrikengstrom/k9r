@@ -30,11 +30,15 @@ object SbtGenerator extends Generator {
   def generatePlaySbtFiles(projectDescription: ProjectDescription, directory: File)(implicit ec: ExecutionContext): Future[File] = {
     projectDescription.language match {
       case Scala =>
-        renderToFile(sbt.txt.playscalabuildsbt(projectDescription), directory, "build.sbt")
-        renderToFile(sbt.txt.playscalapluginssbt(), new File(directory, "project"), "plugins.sbt")
+        Future.sequence(List(renderToFile(sbt.txt.playscalabuildsbt(projectDescription), directory, "build.sbt"),
+          renderToFile(sbt.txt.playscalapluginssbt(), new File(directory, "project"), "plugins.sbt"))) map {
+          _.head
+        }
       case Java =>
-        renderToFile(sbt.txt.playjavabuildsbt(projectDescription), directory, "build.sbt")
-        renderToFile(sbt.txt.playjavapluginssbt(), new File(directory, "project"), "plugins.sbt")
+        Future.sequence(List(renderToFile(sbt.txt.playjavabuildsbt(projectDescription), directory, "build.sbt"),
+          renderToFile(sbt.txt.playjavapluginssbt(), new File(directory, "project"), "plugins.sbt"))) map {
+          _.head
+        }
     }
   }
 
@@ -43,7 +47,7 @@ object SbtGenerator extends Generator {
   }
 
   def generateSparkSbtFiles(projectDescription: ProjectDescription, directory: File)(implicit ec: ExecutionContext): Future[File] = {
-    // TODO Java or Scala??
+    // TODO for now it's just Scala. Maybe Java or Scala??
     renderToFile(sbt.txt.sparkbuildsbt(projectDescription), directory, "build.sbt")
   }
 
