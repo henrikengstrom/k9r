@@ -16,7 +16,8 @@
             <div class="step-1 container">
                 <div class="row">
                     <div class="col-xs-2 summary well">
-                        Bootstrap a project to you get started writing reactive applications in no time
+                        <h4>Project type</h4>
+                        Choose a project type and we'll get you started writing reactive applications in no time
                     </div>
                     <div class="col-xs-10">
                         <div class="row choices">
@@ -57,7 +58,7 @@
             </div>
             <div class="step-3 container" style="display: none">
                 <div class="row">
-                    <div class="col-xs-2 summary well"></div>
+                    <div class="col-xs-2"><div class="summary well"></div></div>
                     <div class="col-xs-10">
 
                         <div class="btn btn-default btn-sm back pull-right"><span class="glyphicon glyphicon-chevron-left"></span> Back </div>
@@ -83,7 +84,10 @@
                                 <input id="organization" type="text" class="form-control" value="">
                             </div>
                         </div>
-                        <div id="create" class="btn btn-primary btn-lg">Create a project for me!</div>
+                    </div>
+                    <div id="create" class="btn btn-primary btn-lg">
+                        Create a project for me!
+                        <span class="glyphicon glyphicon-save"></span>
                     </div>
                 </div>
         </div>
@@ -139,7 +143,7 @@
             $(".step-2 .choices").empty()
 
             $(".step-2 .summary").empty()
-            $(".step-2 .summary").append($("<p><h4>" + state.project.name + "</h4>" + state.project.summary + "</p>"))
+            $(".step-2 .summary").append($("<p><h4>Project type</h4><b>" + state.project.name + "</b> - " + state.project.summary + "</p>"))
 
             selectableTools.forEach(function(tool) {
                 $(".step-2 .choices").append(
@@ -155,7 +159,7 @@
                                     '<div class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></div>' +
                                     '<h4 class="media-heading">' + tool.name + '</h4>' +
                                     '<p>' + tool.summary + '</p>' +
-                                    '<p><b>Requirements:</b>' + tool.requirements + "</p>" +
+                                    '<p><b>Requirements:</b> ' + tool.requirements + "</p>" +
                                 '</div>' +
                             '</div>' +
                         '</div>' +
@@ -198,8 +202,9 @@
             $(".step-3").show()
 
             $(".step-3 .summary").empty()
-            $(".step-3 .summary").append($("<p><h4>" + state.project.name + "</h4>" + state.project.summary + "</p>"))
-            $(".step-3 .summary").append($("<p><h4>Build tool:</h4>" + state.buildTool.name + "</p>"))
+            $(".step-3 .summary").append($("<h3>Project</h3>"))
+            $(".step-3 .summary").append($("<p><h4>Project type</h4><b>" + state.project.name + "</b> - " + state.project.summary + "</p>"))
+            $(".step-3 .summary").append($("<p><h4>Build tool</h4><b>" + state.buildTool.name + "</b> - " + state.buildTool.summary + "</p>"))
 
             if (state.project.languages.length > 1) {
                 $(".language-selection").show()

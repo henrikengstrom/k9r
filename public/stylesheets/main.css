@@ -1,5 +1,6 @@
 #kickstarter {
-    font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif
+    font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+    color: rgb(16, 58, 81);
 }
 
 .navbar-static-top {
@@ -41,3 +42,6 @@
     cursor: hand;
 }
 
+.summary {
+    color: rgb(16, 98, 129);
+}
