@@ -82,10 +82,10 @@
                             <div class="col-xs-4 form-group language-selection">
                                 <label>Language</label>
                                 <div class="radio">
-                                    <label><input type="radio" name="language" value="Scala" checked>Scala</label>
+                                    <label><input type="radio" name="language" class="language-selector" value="Scala" checked>Scala</label>
                                 </div>
                                 <div class="radio">
-                                    <label><input type="radio" name="language" value="Java">Java</label>
+                                    <label><input type="radio" name="language" class="language-selector" value="Java">Java</label>
                                 </div>
                             </div>
                             <div class="col-xs-8 features">
@@ -209,7 +209,7 @@
         $("#organization").on('change', function(ev) {
            state.organization = ev.target.value
         })
-        $("#language").on('change', function(ev) {
+        $(".language-selector").on('change', function(ev) {
            state.language = ev.target.value
         })
 

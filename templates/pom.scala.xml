@@ -13,7 +13,7 @@
     <dependencies>
     @projectDescription.dependencies.map { d =>
         <dependency>
-            <artifactId>@d.artifactId</artifactId>
+            <artifactId>@if(d.addScalaVersion){@(d.artifactId)_@models.Scala.shortVersion}else{@d.artifactId}</artifactId>
             <groupId>@d.groupId</groupId>
             <version>@d.version</version>
             @if(d.scope.isDefined) {
