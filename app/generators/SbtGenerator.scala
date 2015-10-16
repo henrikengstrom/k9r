@@ -58,8 +58,10 @@ object SbtGenerator extends Generator {
   def createCommonFiles(projectDescription: ProjectDescription, directory: File)(implicit ec: ExecutionContext): Future[File] = {
     Future {
       val path = directory.toPath.toString
-      new File(s"$path/src/main/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
-      new File(s"$path/src/test/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
+      if (projectDescription.projectType != models.Play) {
+        new File(s"$path/src/main/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
+        new File(s"$path/src/test/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
+      }
       //
 
       val sbtprojectsubdir = new File(directory, "project")
