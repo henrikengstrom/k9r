@@ -3,11 +3,21 @@ package models
 import generators.CodeGenerator
 
 case class ProjectDescription(
-  projectType: ProjectType,
-  buildTool: BuildTool,
-  language: Language,
-  name: String,
-  organization: String)
+    projectType: ProjectType,
+    buildTool: BuildTool,
+    language: Language,
+    name: String,
+    organization: String,
+    customDependencies: List[Dependency] = Nil,
+    selectedOptions: Set[String] = Set.empty) {
+
+  def dependencies: List[Dependency] = projectType.dependencies ::: customDependencies
+
+  def withDependency(dependency: Dependency) =
+    if (dependencies.contains(dependency)) this
+    else copy(customDependencies = dependency :: customDependencies)
+
+}
 
 sealed trait ProjectType {
   def name: String
@@ -21,12 +31,15 @@ sealed trait ProjectType {
   def supportedLanguages: Set[Language]
   def supportedBuildTools: Set[BuildTool]
 
+  /** a set of option names for this kind of project, for the user to toggle */
+  def featureChoices: List[Feature] = Nil
+
   /**
    * @return A description of what is wrong with the given tool and language for this
    *         project type or None if they are ok
    */
   def validateCombination(tool: BuildTool, language: Language): Option[String] = None
-  
+
   def sampleCodeGenerators(language: Language): List[CodeGenerator]
 }
 
@@ -54,17 +67,32 @@ case object Akka extends ProjectType {
   def name = "Akka"
   def tagline = "Concurrent and scalable apps with the actor model"
   def description = "Akka is a library for building reactive applications based on the actor model"
-  def version = Some("2.4.0")
+
+  val akkaVersion = "2.4.0"
+
+  def version = Some(akkaVersion)
 
   def dirName: String = "akka-project"
 
   def dependencies =
-    List(Dependency("com.typesafe.akka", "akka-actor", "2.4.0"), Dependency("com.typesafe.akka", "akka-testkit", "2.4.0", Some("test")))
+    List(
+      Dependency("com.typesafe.akka", "akka-actor", akkaVersion),
+      Dependency("com.typesafe.akka", "akka-testkit", akkaVersion, Some("test"))
+    )
 
   def supportedLanguages: Set[Language] = Set(Scala, Java)
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
 
   def sampleCodeGenerators(language: Language): List[CodeGenerator] = Nil
+
+  override def featureChoices = List(
+    Feature(
+      "Clustering",
+      "Run Akka across multiple connected nodes",
+      project => Right(project.withDependency(Dependency("com.typesafe.akka", "akka-cluster", akkaVersion)))
+    )
+  )
+
 }
 
 case object Spark extends ProjectType {
@@ -81,6 +109,9 @@ case object Spark extends ProjectType {
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
 
   def sampleCodeGenerators(language: Language): List[CodeGenerator] = Nil
+
+  def addOption(project: ProjectDescription, optionName: String): Either[String, ProjectDescription] =
+    Left(s"Option $optionName not supported for Spark projects")
 }
 
 case object SimpleScala extends ProjectType {
@@ -101,12 +132,12 @@ case object SimpleScala extends ProjectType {
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
 
   def sampleCodeGenerators(language: Language): List[CodeGenerator] = {
-      if (language == Scala) {
-        List(CodeGenerator.SimpleScalaMainScala)
-      } else {
-        Nil
-      }
+    if (language == Scala) {
+      List(CodeGenerator.SimpleScalaMainScala)
+    } else {
+      Nil
     }
+  }
 }
 
 sealed trait BuildTool {
@@ -153,3 +184,13 @@ case class Dependency(artifactId: String,
   version: String,
   scope: Option[String] = None,
   addScalaVersion: Boolean = true)
+
+/**
+ * @param enable Enable the feature for a given project, return Left(errormsg) if something went wrong,
+ *               or Right(updated project) if everything is golden
+ */
+case class Feature(
+  name: String,
+  description: String,
+  enable: ProjectDescription => Either[String, ProjectDescription])
+

@@ -1,11 +1,12 @@
 package controllers
 
 import generators.{ Generator, MvnGenerator, SbtGenerator }
-import models.{ BuildTool, ProjectDescription }
+import models.{ Feature, ProjectType, BuildTool, ProjectDescription }
 import play.api.mvc._
 
 import scala.concurrent.Future
 import generators.GradleGenerator
+import scala.collection.immutable.Seq
 
 class Application extends Controller {
 
@@ -40,17 +41,18 @@ class Application extends Controller {
     Ok(views.html.index(projectTypes, buildTools))
   }
 
-  def generate(project: String, language: String, buildTool: String, name: String, organization: String) = Action.async { _ =>
-    val errorOrDesc = for {
-      proj <- findOrElse(project, nameToProjectType, s"Unknown project type $project").right
-      lang <- findOrElse(language, nameToLanguage, s"Unknown language $language").right
-      tool <- findOrElse(buildTool, nameToBuildTool, s"Unknown build tool $buildTool").right
-      _ <- proj.validateCombination(tool, lang).toLeft(()).right
-    } yield {
-      ProjectDescription(proj, tool, lang, name, organization)
-    }
+  import global.Dispatchers.ioDispatcher
 
-    import global.Dispatchers.ioDispatcher
+  def generate(project: String, language: String, buildTool: String, name: String, organization: String) = Action.async { request =>
+    val errorOrDesc: Either[String, ProjectDescription] =
+      for {
+        projectType <- findOrElse(project, nameToProjectType, s"Unknown project type $project").right
+        lang <- findOrElse(language, nameToLanguage, s"Unknown language $language").right
+        tool <- findOrElse(buildTool, nameToBuildTool, s"Unknown build tool $buildTool").right
+        _ <- projectType.validateCombination(tool, lang).toLeft(()).right
+        features <- toFeatures(featureNamesFrom(request), projectType).right
+        project <- enableFeatures(ProjectDescription(projectType, tool, lang, name, organization), features).right
+      } yield project
 
     errorOrDesc.fold(
       error => Future.successful(BadRequest(error)),
@@ -64,7 +66,29 @@ class Application extends Controller {
     )
   }
 
-  def findOrElse[T](key: String, map: Map[String, T], errorMsg: => String): Either[String, T] =
+  private def findOrElse[T](key: String, map: Map[String, T], errorMsg: => String): Either[String, T] =
     map.get(key.toLowerCase).fold[Either[String, T]](Left(errorMsg))(Right(_))
+
+  private def toFeatures(names: Seq[String], projectType: ProjectType): Either[String, List[Feature]] =
+    names.foldLeft[Either[String, List[Feature]]](Right(Nil)) { (acc, name) =>
+      acc match {
+        case Right(features) =>
+          projectType.featureChoices.find(_.name.toLowerCase == name.toLowerCase)
+            .toRight(s"Unknown feature name '$name'")
+            .right.map(feature => feature :: features)
+        case l => l
+      }
+    }
+
+  private def enableFeatures(project: ProjectDescription, features: List[Feature]): Either[String, ProjectDescription] =
+    features.foldLeft[Either[String, ProjectDescription]](Right(project)) { (project, feature) =>
+      project match {
+        case Right(p) => feature.enable(p)
+        case l => l
+      }
+    }
+
+  private def featureNamesFrom(request: Request[_]): List[String] =
+    request.queryString.get("features").fold[List[String]](Nil)(_.flatMap(_.split(',')).toList)
 
 }

@@ -12,7 +12,7 @@
     <url>http://maven.apache.org</url>
 
     <dependencies>
-        @projectDescription.projectType.dependencies.map { d =>
+        @projectDescription.dependencies.map { d =>
             <dependency>
                 <artifactId>@d.artifactId</artifactId>
                 <groupId>@d.groupId</groupId>

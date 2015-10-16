@@ -8,6 +8,6 @@ repositories {
 
 dependencies {
   compile group: 'org.scala-lang', name: 'scala-library', version: '@projectDescription.language.version'
-@projectDescription.projectType.dependencies.map { d =>
+@projectDescription.dependencies.map { d =>
   compile group: '@d.groupId', name: '@d.artifactId', version: '@d.version'
 }}

@@ -14,7 +14,8 @@ object JsonFormats {
       "tagline" -> pt.tagline,
       "summary" -> pt.description,
       "buildTools" -> pt.supportedBuildTools.map(_.name),
-      "languages" -> pt.supportedLanguages.map(_.languageName)
+      "languages" -> pt.supportedLanguages.map(_.languageName),
+      "featureChoices" -> pt.featureChoices.map(feature => Json.obj("name" -> feature.name, "summary" -> feature.description))
     )
   }
 

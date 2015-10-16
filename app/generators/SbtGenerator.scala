@@ -79,8 +79,8 @@ object SbtGenerator extends Generator {
       Dependency("com.novocode", "junit-interface", "0.11", Some("test"), false))
 
     projectDescription.language match {
-      case Scala => start + (projectDescription.projectType.dependencies ++ scalaAdditionalDeps).map(formatDep).mkString(",\n") + end
-      case Java => start + (projectDescription.projectType.dependencies ++ javaAdditionalDeps).map(formatDep).mkString(",\n") + end
+      case Scala => start + (projectDescription.dependencies ++ scalaAdditionalDeps).map(formatDep).mkString(",\n") + end
+      case Java => start + (projectDescription.dependencies ++ javaAdditionalDeps).map(formatDep).mkString(",\n") + end
     }
   }
 
