@@ -22,17 +22,23 @@ trait Generator {
       case models.Play => PlayResources
       case _ => StandardResources
     }
-    
+
     Future {
-      val source =  currentPath.resolve(mapProjectType(projectType))
+      val source = currentPath.resolve(mapProjectType(projectType))
+      val sourceForSure = if (source.toFile().exists()) {
+        source
+      } else {
+        // the folder doesn't exists, it might be because we are in dev mode
+        currentPath.resolve("resources").resolve(mapProjectType(projectType))
+      }
       val target = currentPath.resolve(randomName)
-      copyDir(source, target, Some(k9rFileEnding))
+      copyDir(sourceForSure, target, Some(k9rFileEnding))
       target.toFile
     }
   }
 
   /**
-   * Zip the given folder, delete the folder and return the zip file. 
+   * Zip the given folder, delete the folder and return the zip file.
    */
   def zip(folder: File, folderName: String): Future[File] = {
     Future {
@@ -51,9 +57,9 @@ trait Generator {
       } finally {
         zipFS.close()
       }
-      
+
       Generator.deleteDir(folderToZip)
-      
+
       zipFile.toFile()
     }
   }
@@ -71,9 +77,7 @@ object Generator {
   def copyDir(src: Path, dest: Path, filterOut: Option[String] = None) {
     val fileVisitor = new SimpleFileVisitor[Path]() {
       override def visitFile(file: Path, attributes: BasicFileAttributes): FileVisitResult = {
-        if (filterOut.isDefined && file.getFileName.endsWith(filterOut.get))
-          Files.delete(file)
-        else
+        if (!(filterOut.isDefined && file.getFileName.endsWith(filterOut.get)))
           copy(file)
 
         FileVisitResult.CONTINUE
@@ -91,7 +95,7 @@ object Generator {
 
     Files.walkFileTree(src, fileVisitor)
   }
-  
+
   def deleteDir(src: Path) {
     val fileVisitor = new SimpleFileVisitor[Path]() {
       override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
