@@ -1,11 +1,11 @@
 package models
 
 case class ProjectDescription(
-                               projectType: ProjectType,
-                               buildTool: BuildTool,
-                               language: Language,
-                               name: String,
-                               organization: String)
+  projectType: ProjectType,
+  buildTool: BuildTool,
+  language: Language,
+  name: String,
+  organization: String)
 
 sealed trait ProjectType {
   def name: String
@@ -92,7 +92,6 @@ case object SimpleScala extends ProjectType {
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
 }
 
-
 sealed trait BuildTool {
   def name: String
   def description: String
@@ -133,7 +132,7 @@ case object Java extends Language {
 }
 
 case class Dependency(artifactId: String,
-                      groupId: String,
-                      version: String,
-                      scope: Option[String] = None,
-                      addScalaVersion: Boolean = true)
+  groupId: String,
+  version: String,
+  scope: Option[String] = None,
+  addScalaVersion: Boolean = true)

@@ -1,6 +1,9 @@
 // The Play plugin
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.3")
 
+// source code formatting
+addSbtPlugin("com.typesafe.sbt" % "sbt-scalariform" % "1.3.0")
+
 // web plugins
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-coffeescript" % "1.0.0")

@@ -8,7 +8,6 @@ import models.ProjectDescription
 
 import scala.concurrent.Future
 
-
 object MvnGenerator extends Generator {
 
   import global.Dispatchers.ioDispatcher
