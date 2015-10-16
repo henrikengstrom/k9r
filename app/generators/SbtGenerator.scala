@@ -6,20 +6,20 @@ import java.nio.file.{ Files, Paths, StandardOpenOption }
 import models._
 import play.twirl.api.Content
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 
 object SbtGenerator extends Generator {
 
-  override def generate(projectDescription: ProjectDescription): Future[File] = {
+  override def generate(projectDescription: ProjectDescription)(implicit ec: ExecutionContext): Future[File] = {
     for {
       directory <- makeProjectBase(projectDescription.projectType)
-      toZip <- generateSbtFiles(projectDescription, directory)
-      zipped <- zip(toZip, projectDescription.projectType.dirName)
+      withCommonfiles <- createCommonFiles(projectDescription, directory)
+      withSbt <- generateSbtFiles(projectDescription, withCommonfiles)
+      zipped <- zip(withSbt, projectDescription.projectType.dirName)
     } yield zipped
   }
 
-  def generateSbtFiles(projectDescription: ProjectDescription, directory: File): Future[File] =
+  def generateSbtFiles(projectDescription: ProjectDescription, directory: File)(implicit ec: ExecutionContext): Future[File] =
     projectDescription.projectType match {
       case Play => generatePlaySbtFiles(projectDescription, directory)
       case Akka => generateAkkaSbtFiles(projectDescription, directory)
@@ -27,7 +27,7 @@ object SbtGenerator extends Generator {
       case SimpleScala => generateScalaSbtFiles(projectDescription, directory)
     }
 
-  def generatePlaySbtFiles(projectDescription: ProjectDescription, directory: File): Future[File] = {
+  def generatePlaySbtFiles(projectDescription: ProjectDescription, directory: File)(implicit ec: ExecutionContext): Future[File] = {
     projectDescription.language match {
       case Scala =>
         renderToFile(sbt.txt.playscalabuildsbt(projectDescription), directory, "build.sbt")
@@ -36,33 +36,33 @@ object SbtGenerator extends Generator {
         renderToFile(sbt.txt.playjavabuildsbt(projectDescription), directory, "build.sbt")
         renderToFile(sbt.txt.playjavapluginssbt(), new File(directory, "project"), "plugins.sbt")
     }
-    createSourceDirs(projectDescription, directory)
-    Future(directory)
   }
 
-  def generateAkkaSbtFiles(projectDescription: ProjectDescription, directory: File): Future[File] = {
+  def generateAkkaSbtFiles(projectDescription: ProjectDescription, directory: File)(implicit ec: ExecutionContext): Future[File] = {
     renderToFile(sbt.txt.akkabuildsbt(projectDescription), directory, "build.sbt")
-    createSourceDirs(projectDescription, directory)
-    Future(directory)
   }
 
-  def generateSparkSbtFiles(projectDescription: ProjectDescription, directory: File): Future[File] = {
+  def generateSparkSbtFiles(projectDescription: ProjectDescription, directory: File)(implicit ec: ExecutionContext): Future[File] = {
     // TODO Java or Scala??
     renderToFile(sbt.txt.sparkbuildsbt(projectDescription), directory, "build.sbt")
-    createSourceDirs(projectDescription, directory)
-    Future(directory)
   }
 
-  def generateScalaSbtFiles(projectDescription: ProjectDescription, directory: File): Future[File] = {
+  def generateScalaSbtFiles(projectDescription: ProjectDescription, directory: File)(implicit ec: ExecutionContext): Future[File] = {
     renderToFile(sbt.txt.scalabuildsbt(projectDescription), directory, "build.sbt")
-    createSourceDirs(projectDescription, directory)
-    Future(directory)
   }
 
-  def createSourceDirs(projectDescription: ProjectDescription, directory: File): Unit = {
-    val path = directory.toPath.toString
-    new File(s"$path/src/main/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
-    new File(s"$path/src/test/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
+  def createCommonFiles(projectDescription: ProjectDescription, directory: File)(implicit ec: ExecutionContext): Future[File] = {
+    Future {
+      val path = directory.toPath.toString
+      new File(s"$path/src/main/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
+      new File(s"$path/src/test/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
+      //
+      Files.write(
+        Paths.get((new File(new File(directory, "project"), "build.properties")).toURI),
+        "sbt.version=0.13.8".getBytes("utf-8"), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
+      // just return the same directory, for type signature convenience / composability
+      directory
+    }
   }
 
   /**
@@ -90,11 +90,15 @@ object SbtGenerator extends Generator {
     s""""${dep.groupId}" ${seperator} "${dep.artifactId}" % "${dep.version}"${scopeString}"""
   }
 
-  def renderToFile(content: Content, directory: File, filename: String): Unit =
+  def renderToFile(content: Content, directory: File, filename: String)(implicit ec: ExecutionContext): Future[File] = {
     // TODO there must be a better way to write a string to a file..
-    Files.write(
-      Paths.get((new File(directory, filename)).toURI),
-      content.body.getBytes("utf-8"),
-      StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
-
+    Future {
+      Files.write(
+        Paths.get((new File(directory, filename)).toURI),
+        content.body.getBytes("utf-8"),
+        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
+      // just return the same directory, for type signature convenience / composability
+      directory
+    }
+  }
 }

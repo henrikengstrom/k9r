@@ -6,13 +6,11 @@ import java.nio.file.Files
 
 import models.ProjectDescription
 
-import scala.concurrent.Future
+import scala.concurrent.{ ExecutionContext, Future }
 
 object MvnGenerator extends Generator {
 
-  import global.Dispatchers.ioDispatcher
-
-  def generate(projectDescription: ProjectDescription): Future[File] = {
+  def generate(projectDescription: ProjectDescription)(implicit ec: ExecutionContext): Future[File] = {
     makeProjectBase(projectDescription.projectType) flatMap { folder =>
       val pomXmlContent: String = xml.pom.render(projectDescription).body
 
