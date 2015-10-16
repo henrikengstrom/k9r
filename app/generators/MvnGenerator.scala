@@ -14,14 +14,15 @@ object MvnGenerator extends Generator {
     makeProjectBase(projectDescription.projectType) flatMap { folder =>
       val pomXmlContent: String = xml.pom.render(projectDescription).body
 
-      // TODO : truncate all returns in the dependencies section -> beautify
-
       val pomXmlFile = new File(folder, "pom.xml")
       Files.write(pomXmlFile.toPath, pomXmlContent.getBytes(StandardCharsets.UTF_8))
 
       val path = folder.toPath.toString
-      new File(s"$path/src/main/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
-      new File(s"$path/src/test/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
+      new File(s"$path/src/main/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/") + "/" + projectDescription.name).mkdirs()
+      new File(s"$path/src/test/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/") + "/" + projectDescription.name).mkdirs()
+
+      val generators = projectDescription.projectType.sampleCodeGenerators(projectDescription.language)
+      generators.foreach(_.generateCode(projectDescription, folder.toPath))
 
       zip(folder, projectDescription.projectType.dirName)
     }
