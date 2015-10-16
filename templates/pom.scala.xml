@@ -30,4 +30,31 @@
         </dependency>
     }
     </dependencies>
+
+    <build>
+        <plugins>
+            @if(projectDescription.language == models.Scala) {
+            <plugin>
+                <!-- configuration of the scala compiler -->
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmArgs>
+                        <jvmArg>-Xms512m</jvmArg>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                    </jvmArgs>
+                </configuration>
+            </plugin>
+            }
+        </plugins>
+    </build>
+
 </project>
