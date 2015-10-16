@@ -1,11 +1,19 @@
 package models
 
 case class ProjectDescription(
+<<<<<<< HEAD
     projectType: ProjectType,
     buildTool: BuildTool,
     language: Language,
     name: String,
     organization: String)
+=======
+  projectType: ProjectType,
+  buildTool: BuildTool,
+  language: Language,
+  name: String,
+  organization: String)
+>>>>>>> master
 
 sealed trait ProjectType {
   def name: String
@@ -120,7 +128,7 @@ case object Java extends Language {
 }
 
 case class Dependency(groupId: String,
-                      artifactId: String,                      
+                      artifactId: String,
                       version: String,
                       scope: Option[String] = None,
                       addScalaVersion: Boolean = true)
