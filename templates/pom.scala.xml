@@ -8,27 +8,26 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Maven Quick Start Archetype</name>
-    <url>http://maven.apache.org</url>
+    <name>@projectDescription.name</name>
 
     <dependencies>
-        @projectDescription.dependencies.map { d =>
-            <dependency>
-                <artifactId>@d.artifactId</artifactId>
-                <groupId>@d.groupId</groupId>
-                <version>@d.version</v ersion>
-                @if(d.scope.isDefined) {
-                <scope>d.scope.get</scope>
-                }
-            </dependency>
-        }
+    @projectDescription.dependencies.map { d =>
+        <dependency>
+            <artifactId>@d.artifactId</artifactId>
+            <groupId>@d.groupId</groupId>
+            <version>@d.version</version>
+            @if(d.scope.isDefined) {
+            <scope>d.scope.get</scope>
+            }
+        </dependency>
+    }
 
-        @if(projectDescription.language.languageName == "scala") {
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>@projectDescription.language.version</version>
-            </dependency>
-        }
+    @if(projectDescription.language == models.Scala) {
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>@projectDescription.language.version</version>
+        </dependency>
+    }
     </dependencies>
 </project>
