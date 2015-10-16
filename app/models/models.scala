@@ -1,15 +1,17 @@
 package models
 
 case class ProjectDescription(
-    projectType: ProjectType,
-    buildTool: BuildTool,
-    language: Language,
-    name: String,
-    organization: String)
+                               projectType: ProjectType,
+                               buildTool: BuildTool,
+                               language: Language,
+                               name: String,
+                               organization: String)
 
 sealed trait ProjectType {
   def version: Option[String]
+
   def dirName: String
+
   def dependencies: List[Dependency]
 
   /**
@@ -21,28 +23,39 @@ sealed trait ProjectType {
 
 case object Play extends ProjectType {
   def version = Some("2.4.3")
+
   def dirName: String = "play-webapp"
+
   def dependencies = Nil
 
   override def validateCombination(tool: BuildTool, language: Language): Option[String] =
     if (tool != SBT) Some("Play project can only be created with SBT")
     else None
-  
+
 }
+
 case object Akka extends ProjectType {
   def version = Some("2.4.0")
+
   def dirName: String = "akka-project"
+
   def dependencies =
-    List(Dependency("com.typesafe.akka", "akka-actor", "2.4.0"))
+    List(Dependency("com.typesafe.akka", "akka-actor", "2.4.0"), Dependency("com.typesafe.akka", "akka-testkit", "2.4.0", Some("test")))
 }
+
 case object Spark extends ProjectType {
   def version = Some("1.5.1")
+
   def dirName: String = "spark-project"
+
   def dependencies = Nil
 }
+
 case object SimpleScala extends ProjectType {
   def version = None
+
   def dirName: String = "scala-project"
+
   def dependencies = Nil
 
   override def validateCombination(tool: BuildTool, language: Language): Option[String] =
@@ -51,21 +64,33 @@ case object SimpleScala extends ProjectType {
 }
 
 sealed trait BuildTool
+
 case object SBT extends BuildTool
+
 case object Maven extends BuildTool
+
 case object Gradle extends BuildTool
 
 sealed trait Language {
   def version: String
+
   def languageName: String
 }
+
 case object Scala extends Language {
   def version = "2.11.6"
+
   def languageName: String = "scala"
 }
+
 case object Java extends Language {
   def version = "1.8"
+
   def languageName: String = "java"
 }
 
-case class Dependency(groupId: String, artifactId: String, version: String)
+case class Dependency(artifactId: String,
+                      groupId: String,
+                      version: String,
+                      scope: Option[String] = None,
+                      addScalaVersion: Boolean = true)

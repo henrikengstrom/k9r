@@ -1,0 +1,11 @@
+@(description: ProjectDescription)
+@import generators.SbtGenerator
+
+organization = "@description.organization"
+name := "@description.name"
+
+version := "1.0"
+
+scalaVersion := "2.11.6"
+
+libraryDependencies ++= @SbtGenerator.generateAkkaDeps(description)

@@ -1,7 +1,7 @@
 import java.io.File
 
 import generators.SbtGenerator
-import models.{SBT, SimpleScala, Scala, ProjectDescription}
+import models._
 import org.scalatest._
 
 import scala.concurrent._
@@ -13,7 +13,7 @@ class SbtGeneratorSpec extends FunSpec with Matchers {
 
   describe("Sbt rendered build.sbt") {
     it("should contain properties") {
-      val rendered = txt.scalabuildsbt(testDescription).body
+      val rendered = sbt.txt.scalabuildsbt(testDescription).body
       rendered should include (testDescription.organization)
       rendered should include (testDescription.name)
 
@@ -23,9 +23,8 @@ class SbtGeneratorSpec extends FunSpec with Matchers {
   describe("Sbt Generator") {
       it("should generate File") {
 
-        val generator = new SbtGenerator
         val tmpdir = new File(System.getProperty("java.io.tmpdir"))
-        val f = generator.generateSbtFiles(testDescription, tmpdir)
+        val f = SbtGenerator.generateSbtFiles(testDescription, tmpdir)
 
         val dirWithFiles = Await.result(f, 30 seconds)
         System.out.println(s"Wrote to ${dirWithFiles.getCanonicalPath}")
@@ -33,4 +32,25 @@ class SbtGeneratorSpec extends FunSpec with Matchers {
       }
 
   }
+
+  describe("Dependency formatter") {
+    it("should format (1)") {
+      val dep1 = Dependency("a", "b", "c")
+      SbtGenerator.formatDep(dep1) should equal(""""b" %% "a" % "c"""")
+    }
+    it("should format (2)") {
+      val dep1 = Dependency("a", "b", "c", None, false)
+      SbtGenerator.formatDep(dep1) should equal(""""b" % "a" % "c"""")
+    }
+    it("should format (3)") {
+      val dep1 = Dependency("a", "b", "c", Some("test"))
+      SbtGenerator.formatDep(dep1) should equal(""""b" %% "a" % "c" % "test"""")
+    }
+    it("should format (4)") {
+      val dep1 = Dependency("a", "b", "c", Some("test"), false)
+      SbtGenerator.formatDep(dep1) should equal(""""b" % "a" % "c" % "test"""")
+    }
+
+  }
+
 }
