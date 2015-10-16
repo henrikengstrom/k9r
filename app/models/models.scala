@@ -1,19 +1,11 @@
 package models
 
 case class ProjectDescription(
-<<<<<<< HEAD
     projectType: ProjectType,
     buildTool: BuildTool,
     language: Language,
     name: String,
     organization: String)
-=======
-  projectType: ProjectType,
-  buildTool: BuildTool,
-  language: Language,
-  name: String,
-  organization: String)
->>>>>>> master
 
 sealed trait ProjectType {
   def name: String
