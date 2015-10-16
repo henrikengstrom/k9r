@@ -84,7 +84,13 @@ case object Akka extends ProjectType {
   def supportedLanguages: Set[Language] = Set(Scala, Java)
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
 
-  def sampleCodeGenerators(language: Language): List[CodeGenerator] = Nil
+  def sampleCodeGenerators(language: Language): List[CodeGenerator] = {
+    if (language == Scala) {
+      List(CodeGenerator.AkkaMainScala)
+    } else {
+      List(CodeGenerator.AkkaMainJava)
+    }
+  }
 
   private val akkaCluster = Dependency("com.typesafe.akka", "akka-cluster", akkaVersion, addScalaVersion = true)
 

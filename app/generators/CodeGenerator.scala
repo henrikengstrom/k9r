@@ -39,6 +39,24 @@ object CodeGenerator {
         .resolve(s"${projectDescription.name}.scala")
   }
 
+  val AkkaMainScala = new TextCodeGenerator {
+    def textResult(projectDescription: ProjectDescription): String =
+      code.Akka.txt.mainScala.render(projectDescription).body
+
+    def destFile(projectDescription: ProjectDescription, root: Path): Path =
+      mainPackagePath(root, projectDescription)
+        .resolve(s"${projectDescription.name}.scala")
+  }
+
+  val AkkaMainJava = new TextCodeGenerator {
+    def textResult(projectDescription: ProjectDescription): String =
+      code.Akka.txt.mainJava.render(projectDescription).body
+
+    def destFile(projectDescription: ProjectDescription, root: Path): Path =
+      mainPackagePath(root, projectDescription)
+        .resolve(s"${projectDescription.name}.java")
+  }
+
   def mainPackagePath(root: Path, projectDescription: ProjectDescription) =
     root
       .resolve("src/main")
