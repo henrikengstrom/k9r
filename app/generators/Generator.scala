@@ -13,53 +13,50 @@ import java.io.IOException
 trait Generator {
   import Generator._
 
-  def generate(projectDescription: ProjectDescription)(implicit ec: ExecutionContext): Future[File]
+  def generate(projectDescription: ProjectDescription): File
 
-  def makeProjectBase(projectType: ProjectType)(implicit ec: ExecutionContext): Future[File] = {
+  def makeProjectBase(projectType: ProjectType): File = {
     def mapProjectType(pt: ProjectType): String = pt match {
       case models.Play => PlayResources
       case _ => StandardResources
     }
 
-    Future {
-      val source = currentPath.resolve(mapProjectType(projectType))
-      val sourceForSure = if (source.toFile().exists()) {
-        source
-      } else {
-        // the folder doesn't exists, it might be because we are in dev mode
-        currentPath.resolve("resources").resolve(mapProjectType(projectType))
-      }
-      val target = currentPath.resolve(randomName)
-      copyDir(sourceForSure, target, Some(k9rFileEnding))
-      target.toFile
+    val source = currentPath.resolve(mapProjectType(projectType))
+    val sourceForSure = if (source.toFile().exists()) {
+      source
+    } else {
+      // the folder doesn't exists, it might be because we are in dev mode
+      currentPath.resolve("resources").resolve(mapProjectType(projectType))
     }
+    val target = currentPath.resolve(randomName)
+    copyDir(sourceForSure, target, Some(k9rFileEnding))
+    target.toFile
   }
 
   /**
    * Zip the given folder, delete the folder and return the zip file.
    */
-  def zip(folder: File, folderName: String)(implicit ec: ExecutionContext): Future[File] = {
-    Future {
-      val folderToZip = folder.toPath()
+  def zip(folder: File, folderName: String): File = {
 
-      val env = new jHashMap[String, String]()
-      env.put("create", "true")
+    val folderToZip = folder.toPath()
 
-      val zipFile = currentPath.resolve(randomName)
-      val zipFSURI = URI.create(s"jar:${zipFile.toUri().toString()}")
-      val zipFS = FileSystems.newFileSystem(zipFSURI, env)
+    val env = new jHashMap[String, String]()
+    env.put("create", "true")
 
-      try {
-        val folderInZip = zipFS.getPath("/", folderName)
-        Generator.copyDir(folderToZip, folderInZip)
-      } finally {
-        zipFS.close()
-      }
+    val zipFile = currentPath.resolve(randomName)
+    val zipFSURI = URI.create(s"jar:${zipFile.toUri().toString()}")
+    val zipFS = FileSystems.newFileSystem(zipFSURI, env)
 
-      Generator.deleteDir(folderToZip)
-
-      zipFile.toFile()
+    try {
+      val folderInZip = zipFS.getPath("/", folderName)
+      Generator.copyDir(folderToZip, folderInZip)
+    } finally {
+      zipFS.close()
     }
+
+    Generator.deleteDir(folderToZip)
+
+    zipFile.toFile()
   }
 }
 

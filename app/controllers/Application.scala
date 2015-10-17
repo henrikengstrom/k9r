@@ -1,11 +1,12 @@
 package controllers
 
-import generators.{ Generator, MvnGenerator, SbtGenerator }
+import java.io.File
+
+import generators.{ Generator, MvnGenerator, SbtGenerator, GradleGenerator }
 import models.{ Feature, ProjectType, BuildTool, ProjectDescription }
 import play.api.mvc._
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import generators.GradleGenerator
 import scala.collection.immutable.Seq
 
 class Application extends Controller {
@@ -41,8 +42,6 @@ class Application extends Controller {
     Ok(views.html.index(projectTypes, buildTools))
   }
 
-  import global.Dispatchers.ioDispatcher
-
   def generate(project: String, language: String, buildTool: String, name: String, organization: String) = Action.async { request =>
     val errorOrDesc: Either[String, ProjectDescription] =
       for {
@@ -56,7 +55,7 @@ class Application extends Controller {
 
     errorOrDesc.fold(
       error => Future.successful(BadRequest(error)),
-      desc => buildToolGenerators(desc.buildTool).generate(desc).map { file =>
+      desc => generateProjectZip(desc).map { file =>
         Ok.sendFile(
           file,
           fileName = _ => desc.projectType.dirName + ".zip",
@@ -65,6 +64,11 @@ class Application extends Controller {
       }
     )
   }
+
+  // blocking op, so run it on its own dispatcher
+  private def generateProjectZip(desc: ProjectDescription): Future[File] = Future {
+    buildToolGenerators(desc.buildTool).generate(desc)
+  }(_root_.global.Dispatchers.ioDispatcher)
 
   private def findOrElse[T](key: String, map: Map[String, T], errorMsg: => String): Either[String, T] =
     map.get(key.toLowerCase).fold[Either[String, T]](Left(errorMsg))(Right(_))
