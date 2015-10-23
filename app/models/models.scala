@@ -9,7 +9,8 @@ case class ProjectDescription(
     name: String,
     organization: String,
     customDependencies: List[Dependency] = Nil,
-    selectedOptions: Set[String] = Set.empty) {
+    selectedOptions: Set[String] = Set.empty
+) {
 
   def dependencies: List[Dependency] = projectType.dependencies ::: customDependencies
 
@@ -131,10 +132,29 @@ case object Spark extends ProjectType {
 
   def dependencies = Nil
 
-  def supportedLanguages: Set[Language] = Set(Scala, Java)
+  def supportedLanguages: Set[Language] = Set(Scala)
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
 
-  def sampleCodeGenerators(language: Language): List[CodeGenerator] = Nil
+  override def featureChoices =
+    List(
+      ("SparkSQL", "sql", "Run SQL queries and use the DataFrame API (recommended)"),
+      ("Spark Streaming", "streaming", "Mini-batch stream processing"),
+      ("MLlib", "mllib", "Machine learning"),
+      ("GraphX", "graphx", "Graph processing")
+    ) map {
+        case (name, module, description) =>
+          val dep = Dependency("org.apache.spark", s"spark-$module", version.get, addScalaVersion = true)
+          Feature(name, description,
+            project => Right(project.withDependency(dep)))
+      }
+
+  def sampleCodeGenerators(language: Language): List[CodeGenerator] = {
+    if (language == Scala) {
+      List(CodeGenerator.SparkMainScala)
+    } else {
+      Nil
+    }
+  }
 
   def addOption(project: ProjectDescription, optionName: String): Either[String, ProjectDescription] =
     Left(s"Option $optionName not supported for Spark projects")
@@ -171,7 +191,8 @@ case object SimpleScala extends ProjectType {
       "Slick",
       "Connect to relational databases with Slick",
       project => Right(project.withDependency(Dependency("com.typesafe.slick", "slick", "3.1.0")))
-    ))
+    )
+  )
 
 }
 
@@ -220,7 +241,8 @@ case class Dependency(
   artifactId: String,
   version: String,
   scope: Option[String] = None,
-  addScalaVersion: Boolean = true)
+  addScalaVersion: Boolean = true
+)
 
 /**
  * @param enable Enable the feature for a given project, return Left(errormsg) if something went wrong,
@@ -229,5 +251,6 @@ case class Dependency(
 case class Feature(
   name: String,
   description: String,
-  enable: ProjectDescription => Either[String, ProjectDescription])
+  enable: ProjectDescription => Either[String, ProjectDescription]
+)
 

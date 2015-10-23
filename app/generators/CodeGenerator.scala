@@ -55,6 +55,15 @@ object CodeGenerator {
         .resolve(s"${projectDescription.name}.java")
   }
 
+  val SparkMainScala = new TextCodeGenerator {
+    def textResult(projectDescription: ProjectDescription): String =
+      code.Spark.txt.mainScala.render(projectDescription).body
+
+    def destFile(projectDescription: ProjectDescription, root: Path): Path =
+      mainPackagePath(root, projectDescription)
+        .resolve(s"${projectDescription.name}.scala")
+  }
+
   def mainPackagePath(root: Path, projectDescription: ProjectDescription) =
     root
       .resolve("src/main")

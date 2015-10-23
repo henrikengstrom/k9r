@@ -65,7 +65,8 @@ object SbtGenerator extends Generator {
 
     Files.write(
       Paths.get(new File(sbtprojectsubdir, "build.properties").toURI),
-      "sbt.version=0.13.9".getBytes("utf-8"), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
+      "sbt.version=0.13.9".getBytes("utf-8"), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
+    )
     // just return the same directory, for type signature convenience / composability
     directory
   }
@@ -80,8 +81,10 @@ object SbtGenerator extends Generator {
     val end = ")"
     // TODO this needs to come from somewhere else..
     val scalaAdditionalDeps = List(Dependency("org.scalatest", "scalatest", "2.2.4", Some("test")))
-    val javaAdditionalDeps = List(Dependency("junit", "junit", "4.12", Some("test"), false),
-      Dependency("com.novocode", "junit-interface", "0.11", Some("test"), false))
+    val javaAdditionalDeps = List(
+      Dependency("junit", "junit", "4.12", Some("test"), false),
+      Dependency("com.novocode", "junit-interface", "0.11", Some("test"), false)
+    )
 
     projectDescription.language match {
       case Scala => start + (projectDescription.dependencies ++ scalaAdditionalDeps).map(formatDep).mkString(",\n") + end
@@ -111,7 +114,8 @@ object SbtGenerator extends Generator {
     Files.write(
       Paths.get((new File(directory, filename)).toURI),
       content.body.getBytes("utf-8"),
-      StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
+      StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
+    )
     // just return the same directory, for type signature convenience / composability
     directory
   }
