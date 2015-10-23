@@ -33,7 +33,8 @@ class Application extends Controller {
     Map(
       models.Maven -> MvnGenerator,
       models.Gradle -> GradleGenerator,
-      models.SBT -> SbtGenerator)
+      models.SBT -> SbtGenerator
+    )
 
   val projectTypes = List(models.Akka, models.Play, models.SimpleScala, models.Spark)
   val buildTools = List(models.SBT, models.Maven, models.Gradle)

@@ -8,9 +8,34 @@ version := "1.0"
 
 scalaVersion := "2.11.7"
 
-// Change this to another test framework if you prefer
-libraryDependencies ++= @SbtGenerator.generateDeps(description)
+scalacOptions := Seq("-deprecation", "feature", "-unchecked", "-encoding", "utf8", "-Xlint")
 
 // Uncomment to use Akka
 //libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.11"
+libraryDependencies += "org.apache.spark"  %% "spark-core"      % "1.5.1"
+libraryDependencies += "org.apache.spark"  %% "spark-repl"      % "1.5.1"
 
+// Optional libraries:
+libraryDependencies ++= @SbtGenerator.generateDeps(description)
+
+
+fork := true
+
+initialCommands += """
+  import org.apache.spark.{SparkContext, SparkConf}
+  import org.apache.spark.SparkContext._
+  import org.apache.spark.sql.SQLContext
+  val sparkConf = new SparkConf()
+  sparkConf.setMaster("local[*]")
+  sparkConf.setAppName("Spark Console")
+  // Silence annoying warning from the Metrics system:
+  sparkConf.set("spark.app.id", "Spark Console")
+  val sc = new SparkContext(sparkConf)
+  val sqlContext = new SQLContext(sc)
+  import sqlContext.implicits._
+  """
+
+cleanupCommands += """
+  println("Closing the SparkContext:")
+  sc.stop()
+  """
