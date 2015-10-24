@@ -11,11 +11,9 @@ object @{projectDescription.name} {
   def main(argv: Array[String]): Unit = {
     println("Hello from @{projectDescription.name}'s for Spark:")
     val conf = new SparkConf()
-    conf.setMaster("local[*]")
-    conf.setAppName("@{projectDescription.name}")
-    // Change to a more reasonable default number of partitions for our data
-    // (from 200)
-    conf.set("spark.sql.shuffle.partitions", "4")
+      .setMaster("local[*]")
+      .setAppName("@{projectDescription.name}")
+      .set("spark.sql.shuffle.partitions", "4") // Better for smaller examples (def: 200)
     val sc = new SparkContext(conf)
     val sqlContext = new SQLContext(sc)
     import sqlContext.implicits._

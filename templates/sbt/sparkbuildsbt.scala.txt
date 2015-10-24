@@ -12,12 +12,9 @@ scalacOptions := Seq("-deprecation", "feature", "-unchecked", "-encoding", "utf8
 
 // Uncomment to use Akka
 //libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.11"
-libraryDependencies += "org.apache.spark"  %% "spark-core"      % "1.5.1"
-libraryDependencies += "org.apache.spark"  %% "spark-repl"      % "1.5.1"
 
-// Optional libraries:
+// Spark libraries:
 libraryDependencies ++= @SbtGenerator.generateDeps(description)
-
 
 fork := true
 
