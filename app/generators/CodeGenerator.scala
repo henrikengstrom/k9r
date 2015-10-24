@@ -1,17 +1,12 @@
 package generators
 
-import models.ProjectDescription
-import scala.concurrent.Future
-import java.io.File
-import java.nio.file.Path
-import java.nio.file.Files
-import global.Dispatchers.ioDispatcher
 import java.nio.charset.StandardCharsets
+import java.nio.file.{ Files, Path }
+
+import models.ProjectDescription
 
 trait CodeGenerator {
-
   def generateCode(projectDescription: ProjectDescription, root: Path): Path
-
 }
 
 abstract class TextCodeGenerator extends CodeGenerator {

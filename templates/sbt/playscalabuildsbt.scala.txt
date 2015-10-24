@@ -1,6 +1,6 @@
 @(description: ProjectDescription)
 
-organization = "@description.organization"
+organization := "@description.organization"
 name := "@description.name"
 
 version := "1.0-SNAPSHOT"

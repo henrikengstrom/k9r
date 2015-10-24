@@ -1,14 +1,14 @@
 package generators
 
-import models._
-import java.io.File
+import java.io.{ File, IOException }
+import java.net.URI
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.Random
 import java.util.{ HashMap => jHashMap }
-import java.net.URI
-import java.io.IOException
+
+import models._
+
+import scala.util.Random
 
 trait Generator {
   import Generator._
