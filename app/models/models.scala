@@ -9,15 +9,13 @@ case class ProjectDescription(
     name: String,
     organization: String,
     customDependencies: List[Dependency] = Nil,
-    selectedOptions: Set[String] = Set.empty
-) {
+    selectedOptions: Set[String] = Set.empty) {
 
   def dependencies: List[Dependency] = projectType.dependencies ::: customDependencies
 
   def withDependency(dependency: Dependency) =
     if (dependencies.contains(dependency)) this
     else copy(customDependencies = dependency :: customDependencies)
-
 }
 
 sealed trait ProjectType {
@@ -119,7 +117,6 @@ case object Akka extends ProjectType {
         .withDependency(Dependency("com.typesafe.akka", "akka-persistence", akkaVersion, addScalaVersion = true)))
     )
   )
-
 }
 
 case object Spark extends ProjectType {
@@ -130,7 +127,11 @@ case object Spark extends ProjectType {
 
   def dirName: String = "spark-project"
 
-  def dependencies = Nil
+  def dependencies =
+    List(
+      Dependency("org.apache.spark", "spark-core", "1.5.1"),
+      Dependency("org.apache.spark", "spark-repl", "1.5.1")
+    )
 
   def supportedLanguages: Set[Language] = Set(Scala)
   def supportedBuildTools: Set[BuildTool] = Set(SBT, Maven, Gradle)
@@ -193,7 +194,6 @@ case object SimpleScala extends ProjectType {
       project => Right(project.withDependency(Dependency("com.typesafe.slick", "slick", "3.1.0")))
     )
   )
-
 }
 
 sealed trait BuildTool {
@@ -201,16 +201,19 @@ sealed trait BuildTool {
   def description: String
   def requirements: String
 }
+
 case object SBT extends BuildTool {
   def name = "SBT"
   def description = "The de facto build tool in Scala"
   def requirements = "You need to have Java 8 installed"
 }
+
 case object Maven extends BuildTool {
   def name = "Maven"
   def description = "A very common build tool in the Java world"
   def requirements = "You need to have Java and Maven installed"
 }
+
 case object Gradle extends BuildTool {
   def name = "Gradle"
   def description = "A popular build tool based on the Groovy programming language"
@@ -219,20 +222,17 @@ case object Gradle extends BuildTool {
 
 sealed trait Language {
   def version: String
-
   def languageName: String
 }
 
 case object Scala extends Language {
   def version = "2.11.6"
   def shortVersion = "2.11"
-
   def languageName: String = "scala"
 }
 
 case object Java extends Language {
   def version = "1.8"
-
   def languageName: String = "java"
 }
 
@@ -241,8 +241,7 @@ case class Dependency(
   artifactId: String,
   version: String,
   scope: Option[String] = None,
-  addScalaVersion: Boolean = true
-)
+  addScalaVersion: Boolean = true)
 
 /**
  * @param enable Enable the feature for a given project, return Left(errormsg) if something went wrong,
@@ -251,6 +250,5 @@ case class Dependency(
 case class Feature(
   name: String,
   description: String,
-  enable: ProjectDescription => Either[String, ProjectDescription]
-)
+  enable: ProjectDescription => Either[String, ProjectDescription])
 

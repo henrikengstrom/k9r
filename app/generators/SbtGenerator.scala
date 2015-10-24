@@ -12,17 +12,24 @@ object SbtGenerator extends Generator {
     val directory = makeProjectBase(projectDescription.projectType)
     val withCommonfiles = createCommonFiles(projectDescription, directory)
     val withSbt = generateSbtFiles(projectDescription, withCommonfiles)
+    generateCodeFiles(projectDescription, directory)
     val zipped = zip(withSbt, projectDescription.projectType.dirName)
     zipped
   }
 
-  def generateSbtFiles(projectDescription: ProjectDescription, directory: File): File =
+  def generateSbtFiles(projectDescription: ProjectDescription, directory: File): File = {
     projectDescription.projectType match {
       case Play => generatePlaySbtFiles(projectDescription, directory)
       case Akka => generateAkkaSbtFiles(projectDescription, directory)
       case Spark => generateSparkSbtFiles(projectDescription, directory)
       case SimpleScala => generateScalaSbtFiles(projectDescription, directory)
     }
+  }
+
+  def generateCodeFiles(projectDescription: ProjectDescription, folder: File): Unit = {
+    val generators = projectDescription.projectType.sampleCodeGenerators(projectDescription.language)
+    generators.foreach(_.generateCode(projectDescription, folder.toPath))
+  }
 
   def generatePlaySbtFiles(projectDescription: ProjectDescription, directory: File): File = {
     projectDescription.language match {
@@ -53,10 +60,12 @@ object SbtGenerator extends Generator {
 
   def createCommonFiles(projectDescription: ProjectDescription, directory: File): File = {
 
-    val path = directory.toPath.toString
     if (projectDescription.projectType != models.Play) {
-      new File(s"$path/src/main/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
-      new File(s"$path/src/test/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/")).mkdirs()
+      CodeGenerator.mainPackagePath(directory.toPath, projectDescription).toFile().mkdirs()
+      CodeGenerator.testPackagePath(directory.toPath, projectDescription).toFile().mkdirs()
+
+      //new File(s"$path/src/main/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/") + "/" + projectDescription.name).mkdirs()
+      //new File(s"$path/src/test/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/") + "/" + projectDescription.name).mkdirs()
     }
     //
 

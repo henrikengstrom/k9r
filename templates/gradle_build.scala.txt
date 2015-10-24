@@ -11,3 +11,9 @@ dependencies {
 @projectDescription.dependencies.map { d =>
   compile group: '@d.groupId', name: '@{d.artifactId}@{if (d.addScalaVersion) s"_${models.Scala.shortVersion}"}', version: '@d.version'
 }}
+
+task runApp(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+
+  main = '@{projectDescription.organization}.@{projectDescription.name.toLowerCase}.@{projectDescription.name}'
+}
