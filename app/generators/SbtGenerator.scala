@@ -63,11 +63,7 @@ object SbtGenerator extends Generator {
     if (projectDescription.projectType != models.Play) {
       CodeGenerator.mainPackagePath(directory.toPath, projectDescription).toFile().mkdirs()
       CodeGenerator.testPackagePath(directory.toPath, projectDescription).toFile().mkdirs()
-
-      //new File(s"$path/src/main/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/") + "/" + projectDescription.name).mkdirs()
-      //new File(s"$path/src/test/${projectDescription.language.languageName}/" + projectDescription.organization.replace(".", "/") + "/" + projectDescription.name).mkdirs()
     }
-    //
 
     val sbtprojectsubdir = new File(directory, "project")
     if (!sbtprojectsubdir.exists()) sbtprojectsubdir.mkdir()
